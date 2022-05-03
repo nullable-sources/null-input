@@ -6,14 +6,30 @@ export module null.input;
 import std.core;
 import null.sdk;
 
-template<typename ret_t, typename data_t, typename id_t, typename str_t>
-constexpr std::pair<id_t, ret_t> create_key_pair(id_t id, str_t key_name) {
-	key_name.erase(0, key_name.find("key_") != -1 ? 4 : 0); //remove "key" for numbers
-	std::replace(key_name.begin(), key_name.end(), '_', ' '); //remove "_"
+namespace null { enum class e_key_id; }
+template<> struct utils::enum_reflection::range<null::e_key_id> {
+	static constexpr int min = 0, max = (int)VK_OEM_7;
+};
 
-	return std::make_pair(id, ret_t{ data_t{ id, key_name } });
+template<typename e_key_id_t, typename key_t>
+std::map<e_key_id_t, key_t> generate_keys() {
+	std::map<e_key_id_t, key_t> result;
+	for(int i = 0; i <= utils::enum_reflection::range<e_key_id_t>::max; i++) {
+		e_key_id_t id = e_key_id_t{ i };
+		std::string name = std::string{ utils::enum_reflection::name(e_key_id_t{ i }) };
+		if(name.empty()) continue;
+		
+		name.erase(0, name.find("key_") != -1 ? 4 : 0); //remove "key" for numbers
+		std::replace(name.begin(), name.end(), '_', ' '); //remove "_"
+
+		result[id] = { { id, name } };
+	}
+
+	if(utils::enum_reflection::count<e_key_id_t>() != result.size())
+		throw std::runtime_error("enum_reflection::cout != map count");
+
+	return result;
 }
-#define create_key_data(key_id) create_key_pair<c_key, c_key::key_data_t>(e_key_id::key_id, std::string{ #key_id })
 
 export namespace null {
 	enum class e_key_id {
@@ -70,6 +86,7 @@ export namespace null {
 		f1 = VK_F1, f2 = VK_F2, f3 = VK_F3, f4 = VK_F4, f5 = VK_F5,
 		f6 = VK_F6, f7 = VK_F7, f8 = VK_F8, f9 = VK_F9, f10 = VK_F10,
 		f11 = VK_F11, f12 = VK_F12,
+		f13 = VK_F13,
 
 		scroll_lock = VK_SCROLL,
 
@@ -138,59 +155,7 @@ export namespace null {
 			}
 		};
 
-		inline std::map<e_key_id, c_key> keys = {
-			create_key_data(mouse_left), create_key_data(mouse_right),
-			create_key_data(mouse_middle),
-			create_key_data(mouse_x1), create_key_data(mouse_x2),
-
-			create_key_data(left_shift), create_key_data(right_shift),
-			create_key_data(left_ctrl), create_key_data(right_ctrl),
-			create_key_data(left_alt), create_key_data(right_alt),
-			create_key_data(cancel),
-			create_key_data(backspace),
-			create_key_data(tab),
-			create_key_data(clear),
-			create_key_data(enter),
-			create_key_data(pause),
-			create_key_data(caps_lock),
-			create_key_data(escape),
-			create_key_data(space),
-			create_key_data(page_up), create_key_data(page_down),
-			create_key_data(end),
-			create_key_data(home),
-			create_key_data(left), create_key_data(down),
-			create_key_data(up), create_key_data(right),
-			create_key_data(print_screen),
-			create_key_data(insert),
-			create_key_data(del),
-
-			create_key_data(key_0), create_key_data(key_1), create_key_data(key_2), create_key_data(key_3), create_key_data(key_4),
-			create_key_data(key_5), create_key_data(key_6), create_key_data(key_7), create_key_data(key_8), create_key_data(key_9),
-
-			create_key_data(a), create_key_data(b), create_key_data(c), create_key_data(d), create_key_data(e),
-			create_key_data(f), create_key_data(g), create_key_data(h), create_key_data(i), create_key_data(j),
-			create_key_data(k), create_key_data(l), create_key_data(m), create_key_data(n), create_key_data(o),
-			create_key_data(p), create_key_data(q), create_key_data(r), create_key_data(s), create_key_data(t),
-			create_key_data(u), create_key_data(v), create_key_data(w), create_key_data(x), create_key_data(y),
-			create_key_data(z),
-
-			create_key_data(win),
-			create_key_data(app),
-
-			create_key_data(num_lock),
-			create_key_data(num_0), create_key_data(num_1), create_key_data(num_2), create_key_data(num_3), create_key_data(num_4),
-			create_key_data(num_5), create_key_data(num_6), create_key_data(num_7), create_key_data(num_8), create_key_data(num_9),
-			create_key_data(num_multiply), create_key_data(num_add), create_key_data(num_subtract), create_key_data(num_decimal), create_key_data(num_divide),
-
-			create_key_data(f1), create_key_data(f2), create_key_data(f3), create_key_data(f4), create_key_data(f5),
-			create_key_data(f6), create_key_data(f7), create_key_data(f8), create_key_data(f9), create_key_data(f10),
-			create_key_data(f11), create_key_data(f12),
-
-			create_key_data(scroll_lock),
-
-			create_key_data(oem_plus), create_key_data(oem_comma), create_key_data(oem_minus), create_key_data(oem_period),
-			create_key_data(oem_1), create_key_data(oem_2), create_key_data(oem_3), create_key_data(oem_4), create_key_data(oem_5), create_key_data(oem_6), create_key_data(oem_7)
-		};
+		inline std::map<e_key_id, c_key> keys = generate_keys<e_key_id, c_key>();
 
 		bool wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
 			std::function<void(e_key_id, bool)> key_processing = [](e_key_id key_id, bool is_up) {
