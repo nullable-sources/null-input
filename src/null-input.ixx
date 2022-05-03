@@ -191,7 +191,7 @@ export namespace null {
 		};
 
 		bool wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
-			std::function<void(e_key_id, bool)> mouse_processing = [](e_key_id key_id, bool is_up) {
+			std::function<void(e_key_id, bool)> key_processing = [](e_key_id key_id, bool is_up) {
 				c_key& key = keys[key_id];
 				if(is_up) {
 					key.state |= e_key_state::up;
@@ -210,29 +210,39 @@ export namespace null {
 				case WM_LBUTTONDBLCLK:
 				case WM_LBUTTONDOWN:
 				case WM_LBUTTONUP: {
-					mouse_processing(e_key_id::mouse_left, msg == WM_LBUTTONUP);
+					key_processing(e_key_id::mouse_left, msg == WM_LBUTTONUP);
 				} return true;
 
 				case WM_RBUTTONDBLCLK:
 				case WM_RBUTTONDOWN:
 				case WM_RBUTTONUP: {
-					mouse_processing(e_key_id::mouse_right, msg == WM_RBUTTONUP);
+					key_processing(e_key_id::mouse_right, msg == WM_RBUTTONUP);
 				} return true;
 
 				case WM_MBUTTONDBLCLK:
 				case WM_MBUTTONDOWN:
 				case WM_MBUTTONUP: {
-					mouse_processing(e_key_id::mouse_middle, msg == WM_MBUTTONUP);
+					key_processing(e_key_id::mouse_middle, msg == WM_MBUTTONUP);
 				} return true;
 
 				case WM_XBUTTONDBLCLK:
 				case WM_XBUTTONDOWN:
 				case WM_XBUTTONUP: {
-					mouse_processing(e_key_id(-e_key_id::mouse_middle + GET_XBUTTON_WPARAM(w_param)), msg == WM_XBUTTONUP);
+					key_processing(e_key_id(-e_key_id::mouse_middle + GET_XBUTTON_WPARAM(w_param)), msg == WM_XBUTTONUP);
 				} return true;
 
 				case WM_MOUSEWHEEL: { mouse.wheel.y += (float)GET_WHEEL_DELTA_WPARAM(w_param) / (float)WHEEL_DELTA; } return true;
 				case WM_MOUSEHWHEEL: { mouse.wheel.x += (float)GET_WHEEL_DELTA_WPARAM(w_param) / (float)WHEEL_DELTA; } return true;
+
+				case WM_KEYDOWN:
+				case WM_SYSKEYDOWN: {
+					key_processing(e_key_id(w_param), false);
+				} return true;
+
+				case WM_KEYUP:
+				case WM_SYSKEYUP: {
+					key_processing(e_key_id(w_param), true);
+				} return true;
 			}
 			return false;
 		}
