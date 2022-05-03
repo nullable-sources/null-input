@@ -77,6 +77,8 @@ export namespace null {
 		oem_1 = VK_OEM_1, oem_2 = VK_OEM_2, oem_3 = VK_OEM_3, oem_4 = VK_OEM_4, oem_5 = VK_OEM_5, oem_6 = VK_OEM_6, oem_7 = VK_OEM_7
 	}; enum_create_cast_operator(e_key_id, -);
 
+	//std::function<void()>
+	//callbacks for up, down and released, pressed called once, the only difference - up and down called in wnd_proc, released and pressed called in main loop.
 	enum class e_key_state : std::uint32_t {
 		up = 1 << 0,
 		down = ~up,
