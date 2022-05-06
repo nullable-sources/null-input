@@ -11,26 +11,6 @@ template<> struct utils::enum_reflection::range<null::e_key_id> {
 	static constexpr int min = 0, max = (int)VK_OEM_7;
 };
 
-template<typename e_key_id_t, typename key_t>
-std::map<e_key_id_t, key_t> generate_keys() {
-	std::map<e_key_id_t, key_t> result;
-	for(int i = 0; i <= utils::enum_reflection::range<e_key_id_t>::max; i++) {
-		e_key_id_t id = e_key_id_t{ i };
-		std::string name = std::string{ utils::enum_reflection::name(e_key_id_t{ i }) };
-		if(name.empty()) continue;
-		
-		name.erase(0, name.find("key_") != -1 ? 4 : 0); //remove "key" for numbers
-		std::replace(name.begin(), name.end(), '_', ' '); //remove "_"
-
-		result[id] = { { id, name } };
-	}
-
-	if(utils::enum_reflection::count<e_key_id_t>() != result.size())
-		throw std::runtime_error("enum_reflection::cout != map count");
-
-	return result;
-}
-
 export namespace null {
 	enum class e_key_id {
 		none,
@@ -86,7 +66,6 @@ export namespace null {
 		f1 = VK_F1, f2 = VK_F2, f3 = VK_F3, f4 = VK_F4, f5 = VK_F5,
 		f6 = VK_F6, f7 = VK_F7, f8 = VK_F8, f9 = VK_F9, f10 = VK_F10,
 		f11 = VK_F11, f12 = VK_F12,
-		f13 = VK_F13,
 
 		scroll_lock = VK_SCROLL,
 
@@ -155,7 +134,25 @@ export namespace null {
 			}
 		};
 
-		inline std::map<e_key_id, c_key> keys = generate_keys<e_key_id, c_key>();
+		std::map<e_key_id, c_key> generate_keys() {
+			std::map<e_key_id, c_key> result;
+			for(auto key : utils::enum_reflection::members<e_key_id>()) {
+				std::string name = std::string{ key.second };
+				if(name.empty()) continue;
+
+				name.erase(0, name.find("key_") != -1 ? 4 : 0); //remove "key" for numbers
+				std::replace(name.begin(), name.end(), '_', ' '); //remove "_"
+
+				result[key.first] = { { key.first, name } };
+			}
+
+			if(utils::enum_reflection::count<e_key_id>() != result.size())
+				throw std::runtime_error("enum_reflection::cout != map count");
+
+			return result;
+		}
+
+		inline std::map<e_key_id, c_key> keys = generate_keys();
 
 		bool wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
 			std::function<void(e_key_id, bool)> key_processing = [](e_key_id key_id, bool is_up) {
