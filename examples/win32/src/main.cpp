@@ -1,6 +1,5 @@
-﻿#include <windows.h>
-import null.input;
-import null.sdk;
+﻿#include <iostream>
+#include <null-input.h>
 
 utils::win::c_window window{ };
 null::input::c_key& mouse_left = null::input::keys[null::e_key_id::mouse_left];
@@ -18,7 +17,7 @@ int main(HINSTANCE instance) {
 
     mouse_left.callbacks.add<void()>(null::e_key_state::released, []() { std::cout << "mouse_left released" << std::endl; });
 
-    window.callbacks.set<bool(HWND, UINT, WPARAM, LPARAM)>(utils::e_window_callbacks::wnd_proc, null::input::wnd_proc);
+    window.callbacks.set<int(HWND, UINT, WPARAM, LPARAM)>(utils::e_window_callbacks::wnd_proc, null::input::wnd_proc);
 
     try {
         window.create();
