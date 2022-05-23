@@ -145,10 +145,6 @@ export namespace null {
 
 				result[key.first] = { { key.first, name } };
 			}
-
-			if(utils::enum_reflection::count<e_key_id>() != result.size())
-				throw std::runtime_error("enum_reflection::cout != map count");
-
 			return result;
 		}
 
