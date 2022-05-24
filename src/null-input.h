@@ -82,14 +82,14 @@ namespace null {
 		public:
 			vec2_t wheel{ }, pos{ }, delta_pos{ };
 
-			void move(vec2_t new_pos);
+			void move(const vec2_t& new_pos);
 		} inline mouse{ };
 
 		class c_key {
 		public:
 			struct key_data_t {
 				e_key_id id{ };
-				std::string name{ };
+				std::string_view name{ };
 			} data{ };
 
 		private:
@@ -105,9 +105,9 @@ namespace null {
 			bool is_pressed() { return state & e_key_state::pressed; }
 
 			c_key() = default;
-			c_key(key_data_t _data) : data(_data) { }
+			c_key(const key_data_t& _data) : data(_data) { }
 
-			void update_states(utils::win::c_window window);
+			void update_states(const utils::win::c_window& window);
 		};
 
 #define create_key(key_id) { e_key_id::key_id, { { e_key_id::key_id, #key_id } } } //reflection takes too long during compilation (~15s)
@@ -171,7 +171,7 @@ namespace null {
 		};
 #undef create_key
 
-		void begin_frame(utils::win::c_window window);
+		void begin_frame(const utils::win::c_window& window);
 
 		int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
 	}

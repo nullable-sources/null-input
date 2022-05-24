@@ -1,13 +1,13 @@
 #include "null-input.h"
 
 namespace null::input {
-	void mouse_data_t::move(vec2_t new_pos) {
+	void mouse_data_t::move(const vec2_t& new_pos) {
 		pos = new_pos;
 		delta_pos = pos - old_pos;
 		old_pos = new_pos;
 	}
 
-	void c_key::update_states(utils::win::c_window window) {
+	void c_key::update_states(const utils::win::c_window& window) {
 		if(~(state | e_key_state::down) && down_duration < 0.f) {
 			state |= e_key_state::pressed;
 			if(callbacks.have_callbacks(e_key_state::pressed)) callbacks.call<void()>(e_key_state::pressed);
@@ -21,7 +21,7 @@ namespace null::input {
 		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.0f ? 0.0f : down_duration + window.time_data.delta_time) : -1.0f;
 	}
 
-	void begin_frame(utils::win::c_window window) {
+	void begin_frame(const utils::win::c_window& window) {
 		std::for_each(keys.begin(), keys.end(), [&](auto& item) { item.second.update_states(window); });
 	}
 
