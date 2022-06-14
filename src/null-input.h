@@ -88,9 +88,9 @@ namespace null {
 		class c_key {
 		public:
 			struct key_data_t {
-				e_key_id id{ };
-				std::string_view name{ };
-			} data{ };
+				const e_key_id id{ };
+				const std::string_view name{ };
+			} const data{ };
 
 		private:
 			float down_duration{ -1.f };
