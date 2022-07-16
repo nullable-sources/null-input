@@ -22,7 +22,7 @@ namespace null::input {
 	}
 
 	void begin_frame(const utils::win::c_window& window) {
-		std::ranges::for_each(keys, [&](std::pair<e_key_id, c_key> key) { key.second.update_states(window); });
+		std::ranges::for_each(keys, [&](std::pair<e_key_id, c_key&> key) { key.second.update_states(window); });
 	}
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
