@@ -11,9 +11,9 @@ namespace null {
 		mouse_middle = VK_MBUTTON,
 		mouse_x1 = VK_XBUTTON1, mouse_x2 = VK_XBUTTON2,
 
-		left_shift = VK_LSHIFT, right_shift = VK_RSHIFT,
-		left_ctrl = VK_LCONTROL, right_ctrl = VK_RCONTROL,
-		left_alt = VK_LMENU, right_alt = VK_RMENU,
+		shift = VK_SHIFT,
+		ctrl = VK_CONTROL,
+		alt = VK_MENU,
 
 		cancel = VK_CANCEL,
 		backspace = VK_BACK,
@@ -104,21 +104,21 @@ namespace null {
 			bool is_released() { return state & e_key_state::released; }
 			bool is_pressed() { return state & e_key_state::pressed; }
 
-			c_key() = default;
+			c_key() { }
 			c_key(const key_data_t& _data) : data(_data) { }
 
 			void update_states(const utils::win::c_window& window);
 		};
 
-#define create_key(key_id) { e_key_id::key_id, { { e_key_id::key_id, #key_id } } } //reflection takes too long during compilation (~15s)
+#define create_key(key_id) { e_key_id::key_id, { { e_key_id::key_id, #key_id } } } //@note: reflection takes too long during compilation (~15s)
 		inline std::map<e_key_id, c_key> keys = {
 			create_key(mouse_left), create_key(mouse_right),
 			create_key(mouse_middle),
 			create_key(mouse_x1), create_key(mouse_x2),
 
-			create_key(left_shift), create_key(right_shift),
-			create_key(left_ctrl), create_key(right_ctrl),
-			create_key(left_alt), create_key(right_alt),
+			create_key(shift),
+			create_key(ctrl),
+			create_key(alt),
 
 			create_key(cancel),
 			create_key(backspace),
