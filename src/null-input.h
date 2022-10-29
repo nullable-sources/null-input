@@ -3,7 +3,7 @@
 #include <windowsx.h>
 #include <null-sdk.h>
 
-namespace null {
+namespace null::input {
 	enum class e_key_id {
 		none,
 
@@ -65,8 +65,8 @@ namespace null {
 		oem_1 = VK_OEM_1, oem_2 = VK_OEM_2, oem_3 = VK_OEM_3, oem_4 = VK_OEM_4, oem_5 = VK_OEM_5, oem_6 = VK_OEM_6, oem_7 = VK_OEM_7
 	}; enum_create_cast_operator(e_key_id, -);
 
-	//std::function<void()>
-	//callbacks for up, down and released, pressed called once, the only difference - up and down called in wnd_proc, released and pressed called in main loop.
+	//@note:	std::function<void()>
+	//			callbacks for up, down and released, pressed called once, the only difference - up and down called in wnd_proc, released and pressed called in main loop.
 	enum class e_key_state : std::uint32_t {
 		up = 1 << 0,
 		down = ~up,
@@ -74,105 +74,103 @@ namespace null {
 		pressed = 1 << 2
 	}; enum_create_bit_operators(e_key_state, true);
 
-	namespace input {
-		struct mouse_data_t {
-		private:
-			vec2_t old_pos{ };
+	struct mouse_data_t {
+	private:
+		vec2_t old_pos{ };
 
-		public:
-			vec2_t wheel{ }, pos{ }, delta_pos{ };
+	public:
+		vec2_t wheel{ }, pos{ }, delta_pos{ };
 
-			void move(const vec2_t& new_pos);
-		} inline mouse{ };
+		void move(const vec2_t& new_pos);
+	} inline mouse{ };
 
-		class c_key {
-		public:
-			struct key_data_t {
-				const e_key_id id{ };
-				const std::string_view name{ };
-			} const data{ };
+	class c_key {
+	public:
+		struct key_data_t {
+			const e_key_id id{ };
+			const std::string_view name{ };
+		} const data{ };
 
-		private:
-			float down_duration{ -1.f };
+	private:
+		float down_duration{ -1.f };
 
-		public:
-			array_callbacks_t<e_key_state> callbacks{ };
+	public:
+		array_callbacks_t<e_key_state> callbacks{ };
 
-			e_key_state state{ e_key_state::up };
-			bool is_up() { return state & e_key_state::up; }
-			bool is_down() { return ~(state | e_key_state::down); }
-			bool is_released() { return state & e_key_state::released; }
-			bool is_pressed() { return state & e_key_state::pressed; }
+		e_key_state state{ e_key_state::up };
+		bool is_up() { return state & e_key_state::up; }
+		bool is_down() { return ~(state | e_key_state::down); }
+		bool is_released() { return state & e_key_state::released; }
+		bool is_pressed() { return state & e_key_state::pressed; }
 
-			c_key() { }
-			c_key(const key_data_t& _data) : data(_data) { }
+		c_key() { }
+		c_key(const key_data_t& _data) : data{ _data } { }
 
-			void update_states(const utils::win::c_window& window);
-		};
+		void update_states(const utils::win::c_window& window);
+	};
 
 #define create_key(key_id) { e_key_id::key_id, { { e_key_id::key_id, #key_id } } } //@note: reflection takes too long during compilation (~15s)
-		inline std::map<e_key_id, c_key> keys = {
-			create_key(mouse_left), create_key(mouse_right),
-			create_key(mouse_middle),
-			create_key(mouse_x1), create_key(mouse_x2),
+	inline std::map<e_key_id, c_key> keys = {
+		create_key(mouse_left), create_key(mouse_right),
+		create_key(mouse_middle),
+		create_key(mouse_x1), create_key(mouse_x2),
 
-			create_key(shift),
-			create_key(ctrl),
-			create_key(alt),
+		create_key(shift),
+		create_key(ctrl),
+		create_key(alt),
 
-			create_key(cancel),
-			create_key(backspace),
-			create_key(tab),
-			create_key(clear),
-			create_key(enter),
+		create_key(cancel),
+		create_key(backspace),
+		create_key(tab),
+		create_key(clear),
+		create_key(enter),
 
-			create_key(pause),
-			create_key(caps_lock),
-			create_key(escape),
-			create_key(space),
-			create_key(page_up),
-			create_key(page_down),
-			create_key(end),
-			create_key(home),
-			create_key(left),
-			create_key(up),
-			create_key(right),
-			create_key(down),
-			create_key(print_screen),
-			create_key(insert),
-			create_key(del),
+		create_key(pause),
+		create_key(caps_lock),
+		create_key(escape),
+		create_key(space),
+		create_key(page_up),
+		create_key(page_down),
+		create_key(end),
+		create_key(home),
+		create_key(left),
+		create_key(up),
+		create_key(right),
+		create_key(down),
+		create_key(print_screen),
+		create_key(insert),
+		create_key(del),
 
-			create_key(key_0), create_key(key_1), create_key(key_2), create_key(key_3), create_key(key_4),
-			create_key(key_5), create_key(key_6), create_key(key_7), create_key(key_8), create_key(key_9),
-			
-			create_key(a), create_key(b), create_key(c), create_key(d), create_key(e),
-			create_key(f), create_key(g), create_key(h), create_key(i), create_key(j),
-			create_key(k), create_key(l), create_key(m), create_key(n), create_key(o),
-			create_key(p), create_key(q), create_key(r), create_key(s), create_key(t),
-			create_key(u), create_key(v), create_key(w), create_key(x), create_key(y),
-			create_key(z),
+		create_key(key_0), create_key(key_1), create_key(key_2), create_key(key_3), create_key(key_4),
+		create_key(key_5), create_key(key_6), create_key(key_7), create_key(key_8), create_key(key_9),
 
-			create_key(win),
-			create_key(app),
+		create_key(a), create_key(b), create_key(c), create_key(d), create_key(e),
+		create_key(f), create_key(g), create_key(h), create_key(i), create_key(j),
+		create_key(k), create_key(l), create_key(m), create_key(n), create_key(o),
+		create_key(p), create_key(q), create_key(r), create_key(s), create_key(t),
+		create_key(u), create_key(v), create_key(w), create_key(x), create_key(y),
+		create_key(z),
 
-			create_key(num_lock),
-			create_key(num_0), create_key(num_1), create_key(num_2), create_key(num_3), create_key(num_4),
-			create_key(num_5), create_key(num_6), create_key(num_7), create_key(num_8), create_key(num_9),
-			create_key(num_multiply), create_key(num_add), create_key(num_subtract), create_key(num_decimal), create_key(num_divide),
+		create_key(win),
+		create_key(app),
 
-			create_key(f1), create_key(f2), create_key(f3), create_key(f4), create_key(f5),
-			create_key(f6), create_key(f7), create_key(f8), create_key(f9), create_key(f10),
-			create_key(f11), create_key(f12),
+		create_key(num_lock),
+		create_key(num_0), create_key(num_1), create_key(num_2), create_key(num_3), create_key(num_4),
+		create_key(num_5), create_key(num_6), create_key(num_7), create_key(num_8), create_key(num_9),
+		create_key(num_multiply), create_key(num_add), create_key(num_subtract), create_key(num_decimal), create_key(num_divide),
 
-			create_key(scroll_lock),
+		create_key(f1), create_key(f2), create_key(f3), create_key(f4), create_key(f5),
+		create_key(f6), create_key(f7), create_key(f8), create_key(f9), create_key(f10),
+		create_key(f11), create_key(f12),
 
-			create_key(oem_plus), create_key(oem_comma), create_key(oem_minus), create_key(oem_period),
-			create_key(oem_1), create_key(oem_2), create_key(oem_3), create_key(oem_4), create_key(oem_5), create_key(oem_6), create_key(oem_7)
-		};
+		create_key(scroll_lock),
+
+		create_key(oem_plus), create_key(oem_comma), create_key(oem_minus), create_key(oem_period),
+		create_key(oem_1), create_key(oem_2), create_key(oem_3), create_key(oem_4), create_key(oem_5), create_key(oem_6), create_key(oem_7)
+	};
 #undef create_key
 
-		void begin_frame(const utils::win::c_window& window);
+	void begin_frame(const utils::win::c_window& window);
 
-		int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
-	}
+	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
 }

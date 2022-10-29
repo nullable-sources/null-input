@@ -26,8 +26,8 @@ namespace null::input {
 	}
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
-		std::function<void(e_key_id, bool)> key_processing = [](e_key_id key_id, bool is_up) {
-			c_key& key = keys[key_id];
+		const static std::function<void(e_key_id, bool)> key_processing{ [](e_key_id key_id, bool is_up) {
+			c_key& key{ keys[key_id] };
 			if(is_up) {
 				key.state |= e_key_state::up;
 				key.callbacks.call<void()>(e_key_state::up);
@@ -35,7 +35,7 @@ namespace null::input {
 				key.state &= e_key_state::down;
 				key.callbacks.call<void()>(e_key_state::down);
 			}
-		};
+		} };
 
 		switch(msg) {
 			case WM_MOUSEMOVE: {
