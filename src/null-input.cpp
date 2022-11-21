@@ -1,4 +1,4 @@
-#include "null-input.h"
+#include <null-input.h>
 
 namespace null::input {
 	void mouse_data_t::move(const vec2_t& new_pos) {
