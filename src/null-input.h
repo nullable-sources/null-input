@@ -81,6 +81,15 @@ namespace null::input {
 	public:
 		vec2_t wheel{ }, pos{ }, delta_pos{ };
 
+		std::map<e_key_id, vec2_t> last_click_positions {
+			{ e_key_id::mouse_left, std::numeric_limits<float>::min() },
+			{ e_key_id::mouse_right, std::numeric_limits<float>::min() },
+			{ e_key_id::mouse_middle, std::numeric_limits<float>::min() },
+			{ e_key_id::mouse_x1, std::numeric_limits<float>::min() },
+			{ e_key_id::mouse_x2, std::numeric_limits<float>::min() }
+		};
+
+	public:
 		void move(const vec2_t& new_pos);
 	} inline mouse{ };
 

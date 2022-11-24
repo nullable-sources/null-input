@@ -10,12 +10,12 @@ namespace null::input {
 	void c_key::update_states(const utils::win::c_window& window) {
 		if(~(state | e_key_state::down) && down_duration < 0.f) {
 			state |= e_key_state::pressed;
-			if(callbacks.have_callbacks(e_key_state::pressed)) callbacks.call<void()>(e_key_state::pressed);
+			callbacks.call<void()>(e_key_state::pressed);
 		} else state &= ~e_key_state::pressed;
 
 		if(state & e_key_state::up && down_duration >= 0.f) {
 			state |= e_key_state::released;
-			if(callbacks.have_callbacks(e_key_state::released)) callbacks.call<void()>(e_key_state::released);
+			callbacks.call<void()>(e_key_state::released);
 		} else state &= ~e_key_state::released;
 
 		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.0f ? 0.0f : down_duration + window.time_data.delta_time) : -1.0f;
@@ -35,6 +35,8 @@ namespace null::input {
 				key.state &= e_key_state::down;
 				key.callbacks.call<void()>(e_key_state::down);
 			}
+
+			if(mouse.last_click_positions.contains(key_id)) mouse.last_click_positions[key_id] = is_up ? std::numeric_limits<float>::max() : mouse.pos;
 		} };
 
 		switch(msg) {
