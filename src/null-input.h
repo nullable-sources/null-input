@@ -75,22 +75,14 @@ namespace null::input {
 	}; enum_create_bit_operators(e_key_state, true);
 
 	struct mouse_data_t {
-	private:
-		vec2_t old_pos{ };
-
 	public:
 		vec2_t wheel{ }, pos{ }, delta_pos{ };
 
-		std::map<e_key_id, vec2_t> last_click_positions {
-			{ e_key_id::mouse_left, std::numeric_limits<float>::min() },
-			{ e_key_id::mouse_right, std::numeric_limits<float>::min() },
-			{ e_key_id::mouse_middle, std::numeric_limits<float>::min() },
-			{ e_key_id::mouse_x1, std::numeric_limits<float>::min() },
-			{ e_key_id::mouse_x2, std::numeric_limits<float>::min() }
-		};
-
 	public:
-		void move(const vec2_t& new_pos);
+		void move(const vec2_t& new_pos) {
+			delta_pos = new_pos - pos;
+			pos = new_pos;
+		}
 	} inline mouse{ };
 
 	class c_key {
@@ -107,13 +99,17 @@ namespace null::input {
 		array_callbacks_t<e_key_state> callbacks{ };
 
 		e_key_state state{ e_key_state::up };
-		bool is_up() { return state & e_key_state::up; }
-		bool is_down() { return ~(state | e_key_state::down); }
-		bool is_released() { return state & e_key_state::released; }
-		bool is_pressed() { return state & e_key_state::pressed; }
 
+	public:
 		c_key() { }
 		c_key(const key_data_t& _data) : data{ _data } { }
+		
+	public:
+		bool check_state(const e_key_state& _state) const { return _state == e_key_state::down ? is_down() : (state & _state); }
+		bool is_up() const { return state & e_key_state::up; }
+		bool is_down() const { return ~(state | e_key_state::down); }
+		bool is_released() const { return state & e_key_state::released; }
+		bool is_pressed() const { return state & e_key_state::pressed; }
 
 		void update_states(const utils::win::c_window& window);
 	};
@@ -178,6 +174,59 @@ namespace null::input {
 		create_key(oem_1), create_key(oem_2), create_key(oem_3), create_key(oem_4), create_key(oem_5), create_key(oem_6), create_key(oem_7)
 	};
 #undef create_key
+
+	struct keys_view_t {
+	public:
+		std::vector<e_key_id> ids{ };
+
+	public:
+		keys_view_t() { }
+		keys_view_t(const std::initializer_list<e_key_id>& _ids) : ids{ _ids } { }
+
+	public:
+		bool check_state(const e_key_state& state) const { return std::ranges::all_of(ids, [&](const e_key_id& id) { return keys[id].check_state(state); }); }
+		bool is_up() const { return check_state(e_key_state::up); }
+		bool is_down() const { return check_state(e_key_state::down); }
+		bool is_released() const { return check_state(e_key_state::released); }
+		bool is_pressed() const { return check_state(e_key_state::pressed); }
+
+	public:
+		bool operator==(const keys_view_t&) const = default;
+	};
+
+	class c_bind {
+	public:
+		static inline std::vector<c_bind> created_binds{ };
+
+		static c_bind* find(const keys_view_t& keys_view) {
+			if(auto finded{ std::ranges::find(created_binds, c_bind{ keys_view }) }; finded != created_binds.end())
+				return &(*finded);
+
+			return nullptr;
+		}
+
+	public:
+		keys_view_t keys_view{ };
+		array_callbacks_t<e_key_state> callbacks{ }; //@note: use only e_key_state::up and e_key_state::down
+
+	public:
+		void remove() const {
+			if(auto finded{ std::ranges::find(created_binds, *this) }; finded != created_binds.end())
+				created_binds.erase(finded);
+		}
+
+		void add() const {
+			if(auto finded{ find(keys_view) }) {
+				finded->callbacks = callbacks;
+			} else created_binds.push_back(*this);
+		}
+		
+	public:
+		c_bind& add_callback(const e_key_state& state, const std::function<void()>& callback) { callbacks.add(state, callback); return *this; }
+
+	public:
+		bool operator==(const c_bind& bind) const { return keys_view == bind.keys_view; }
+	};
 
 	void begin_frame(const utils::win::c_window& window);
 

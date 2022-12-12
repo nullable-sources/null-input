@@ -1,12 +1,6 @@
 #include <null-input.h>
 
 namespace null::input {
-	void mouse_data_t::move(const vec2_t& new_pos) {
-		pos = new_pos;
-		delta_pos = pos - old_pos;
-		old_pos = new_pos;
-	}
-
 	void c_key::update_states(const utils::win::c_window& window) {
 		if(~(state | e_key_state::down) && down_duration < 0.f) {
 			state |= e_key_state::pressed;
@@ -18,7 +12,7 @@ namespace null::input {
 			callbacks.call<void()>(e_key_state::released);
 		} else state &= ~e_key_state::released;
 
-		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.0f ? 0.0f : down_duration + window.time_data.delta_time) : -1.0f;
+		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.f ? 0.f : down_duration + window.time_data.delta_time) : -1.f;
 	}
 
 	void begin_frame(const utils::win::c_window& window) {
@@ -27,16 +21,27 @@ namespace null::input {
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
 		const static std::function<void(e_key_id, bool)> key_processing{ [](e_key_id key_id, bool is_up) {
+			static keys_view_t current_pressed_keys{ };
+			
 			c_key& key{ keys[key_id] };
-			if(is_up) {
-				key.state |= e_key_state::up;
-				key.callbacks.call<void()>(e_key_state::up);
-			} else {
-				key.state &= e_key_state::down;
-				key.callbacks.call<void()>(e_key_state::down);
-			}
+			e_key_state state{ is_up ? e_key_state::up : e_key_state::down };
+			
+			if(is_up) key.state |= state;
+			else {
+				key.state &= state;
 
-			if(mouse.last_click_positions.contains(key_id)) mouse.last_click_positions[key_id] = is_up ? std::numeric_limits<float>::max() : mouse.pos;
+				if(auto finded{ std::ranges::find(current_pressed_keys.ids, key_id) }; finded == current_pressed_keys.ids.end())
+					current_pressed_keys.ids.push_back(key_id);
+			}
+			
+			key.callbacks.call<void()>(state);
+			if(c_bind* finded{ c_bind::find(current_pressed_keys) })
+				finded->callbacks.call<void()>(state);
+
+			if(is_up) {
+				if(auto finded{ std::ranges::find(current_pressed_keys.ids, key_id) }; finded != current_pressed_keys.ids.end())
+					current_pressed_keys.ids.erase(finded);
+			}
 		} };
 
 		switch(msg) {
