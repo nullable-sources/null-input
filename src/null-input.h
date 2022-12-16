@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <windowsx.h>
+#include <map>
 #include <null-sdk.h>
 
 namespace null::input {
@@ -74,6 +75,19 @@ namespace null::input {
 		pressed = 1 << 2
 	}; enum_create_bit_operators(e_key_state, true);
 
+	enum class e_key_callbacks {
+		on_up,
+		on_down,
+		on_released,
+		on_pressed
+	};
+	using key_state_callbacks_t = utils::callbacks_tuple_t<
+		utils::callbacks_t<e_key_callbacks::on_up, void()>,
+		utils::callbacks_t<e_key_callbacks::on_down, void()>,
+		utils::callbacks_t<e_key_callbacks::on_released, void()>,
+		utils::callbacks_t<e_key_callbacks::on_pressed, void()>
+	>;
+
 	struct mouse_data_t {
 	public:
 		vec2_t wheel{ }, pos{ }, delta_pos{ };
@@ -96,7 +110,7 @@ namespace null::input {
 		float down_duration{ -1.f };
 
 	public:
-		array_callbacks_t<e_key_state> callbacks{ };
+		key_state_callbacks_t callbacks{ };
 
 		e_key_state state{ e_key_state::up };
 
@@ -207,7 +221,10 @@ namespace null::input {
 
 	public:
 		keys_view_t keys_view{ };
-		array_callbacks_t<e_key_state> callbacks{ }; //@note: use only e_key_state::up and e_key_state::down
+		utils::callbacks_tuple_t<
+			utils::callbacks_t<e_key_callbacks::on_up, void()>,
+			utils::callbacks_t<e_key_callbacks::on_down, void()>
+		> callbacks{ };
 
 	public:
 		void remove() const {
@@ -222,7 +239,8 @@ namespace null::input {
 		}
 		
 	public:
-		c_bind& add_callback(const e_key_state& state, const auto& callback) { callbacks.add(state, callback); return *this; }
+		template <e_key_callbacks key_callback>
+		c_bind& add_callback(const std::function<void()>& callback) { callbacks.at<key_callback>().add(callback); return *this; }
 
 	public:
 		bool operator==(const c_bind& bind) const { return keys_view == bind.keys_view; }

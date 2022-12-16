@@ -19,18 +19,18 @@ int main(HINSTANCE instance) {
     window = utils::win::c_window{ instance };
 
     null::input::c_bind{ { null::input::e_key_id::a, null::input::e_key_id::alt } }
-        .add_callback(null::input::e_key_state::down, [] { std::cout << "bind a + alt" << std::endl; })
+        .add_callback<null::input::e_key_callbacks::on_down>([] { std::cout << "bind a + alt" << std::endl; })
         .add();
 
     null::input::c_bind{ { null::input::e_key_id::a, null::input::e_key_id::alt, null::input::e_key_id::c } }
-        .add_callback(null::input::e_key_state::up, [] { std::cout << "bind a + alt + c" << std::endl; })
+        .add_callback<null::input::e_key_callbacks::on_up>([] { std::cout << "bind a + alt + c" << std::endl; })
         .add();
 
-    mouse_left.callbacks.add(null::input::e_key_state::released, []() { std::cout << "mouse_left released" << std::endl; });
-    mouse_left.callbacks.add(null::input::e_key_state::down, []() { std::cout << "mouse_left down" << std::endl; });
+    mouse_left.callbacks.at<null::input::e_key_callbacks::on_released>().add([] { std::cout << "mouse_left released" << std::endl; });
+    mouse_left.callbacks.at<null::input::e_key_callbacks::on_down>().add([] { std::cout << "mouse_left down" << std::endl; });
 
-    window.callbacks.add(utils::win::e_window_callbacks::on_main_loop, main_loop);
-    window.callbacks.add(utils::win::e_window_callbacks::on_wnd_proc, null::input::wnd_proc);
+    window.callbacks.at<utils::win::e_window_callbacks::on_main_loop>().add(main_loop);
+    window.callbacks.at<utils::win::e_window_callbacks::on_wnd_proc>().add(null::input::wnd_proc);
 
     try {
         window.create();

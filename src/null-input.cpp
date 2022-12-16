@@ -4,12 +4,12 @@ namespace null::input {
 	void c_key::update_states(const utils::win::c_window& window) {
 		if(~(state | e_key_state::down) && down_duration < 0.f) {
 			state |= e_key_state::pressed;
-			callbacks.call(e_key_state::pressed);
+			callbacks.at<e_key_callbacks::on_pressed>().call();
 		} else state &= ~e_key_state::pressed;
 
 		if(state & e_key_state::up && down_duration >= 0.f) {
 			state |= e_key_state::released;
-			callbacks.call(e_key_state::released);
+			callbacks.at<e_key_callbacks::on_released>().call();
 		} else state &= ~e_key_state::released;
 
 		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.f ? 0.f : down_duration + window.time_data.delta_time) : -1.f;
@@ -20,27 +20,24 @@ namespace null::input {
 	}
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
-		const static std::function<void(e_key_id, bool)> key_processing{ [](e_key_id key_id, bool is_up) {
+		const static std::function<void(e_key_id, bool)> key_processing{ [](e_key_id key_id, const bool is_up) {
 			static keys_view_t current_pressed_keys{ };
 			
 			c_key& key{ keys[key_id] };
 			e_key_state state{ is_up ? e_key_state::up : e_key_state::down };
 			
-			if(is_up) key.state |= state;
-			else {
-				key.state &= state;
-
-				if(auto finded{ std::ranges::find(current_pressed_keys.ids, key_id) }; finded == current_pressed_keys.ids.end())
-					current_pressed_keys.ids.push_back(key_id);
-			}
-			
-			key.callbacks.call(state);
-			if(c_bind* finded{ c_bind::find(current_pressed_keys) })
-				finded->callbacks.call(state);
-
 			if(is_up) {
-				if(auto finded{ std::ranges::find(current_pressed_keys.ids, key_id) }; finded != current_pressed_keys.ids.end())
-					current_pressed_keys.ids.erase(finded);
+				key.state |= e_key_state::up;
+				key.callbacks.at<e_key_callbacks::on_up>().call();
+
+				if(c_bind* finded{ c_bind::find(current_pressed_keys) }) finded->callbacks.at<e_key_callbacks::on_up>().call();
+				if(auto finded{ std::ranges::find(current_pressed_keys.ids, key_id) }; finded != current_pressed_keys.ids.end()) current_pressed_keys.ids.erase(finded);
+			} else {
+				key.state &= e_key_state::down;
+				key.callbacks.at<e_key_callbacks::on_down>().call();
+
+				if(auto finded{ std::ranges::find(current_pressed_keys.ids, key_id) }; finded == current_pressed_keys.ids.end()) current_pressed_keys.ids.push_back(key_id);
+				if(c_bind * finded{ c_bind::find(current_pressed_keys) }) finded->callbacks.at<e_key_callbacks::on_down>().call();
 			}
 		} };
 
