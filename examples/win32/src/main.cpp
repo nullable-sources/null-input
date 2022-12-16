@@ -26,11 +26,11 @@ int main(HINSTANCE instance) {
         .add_callback(null::input::e_key_state::up, [] { std::cout << "bind a + alt + c" << std::endl; })
         .add();
 
-    mouse_left.callbacks.add<void()>(null::input::e_key_state::released, []() { std::cout << "mouse_left released" << std::endl; });
-    mouse_left.callbacks.add<void()>(null::input::e_key_state::down, []() { std::cout << "mouse_left down" << std::endl; });
+    mouse_left.callbacks.add(null::input::e_key_state::released, []() { std::cout << "mouse_left released" << std::endl; });
+    mouse_left.callbacks.add(null::input::e_key_state::down, []() { std::cout << "mouse_left down" << std::endl; });
 
-    window.callbacks.add<void()>(utils::win::e_window_callbacks::on_main_loop, main_loop);
-    window.callbacks.add<int(HWND, UINT, WPARAM, LPARAM)>(utils::win::e_window_callbacks::on_wnd_proc, null::input::wnd_proc);
+    window.callbacks.add(utils::win::e_window_callbacks::on_main_loop, main_loop);
+    window.callbacks.add(utils::win::e_window_callbacks::on_wnd_proc, null::input::wnd_proc);
 
     try {
         window.create();

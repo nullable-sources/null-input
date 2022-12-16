@@ -4,12 +4,12 @@ namespace null::input {
 	void c_key::update_states(const utils::win::c_window& window) {
 		if(~(state | e_key_state::down) && down_duration < 0.f) {
 			state |= e_key_state::pressed;
-			callbacks.call<void()>(e_key_state::pressed);
+			callbacks.call(e_key_state::pressed);
 		} else state &= ~e_key_state::pressed;
 
 		if(state & e_key_state::up && down_duration >= 0.f) {
 			state |= e_key_state::released;
-			callbacks.call<void()>(e_key_state::released);
+			callbacks.call(e_key_state::released);
 		} else state &= ~e_key_state::released;
 
 		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.f ? 0.f : down_duration + window.time_data.delta_time) : -1.f;
@@ -34,9 +34,9 @@ namespace null::input {
 					current_pressed_keys.ids.push_back(key_id);
 			}
 			
-			key.callbacks.call<void()>(state);
+			key.callbacks.call(state);
 			if(c_bind* finded{ c_bind::find(current_pressed_keys) })
-				finded->callbacks.call<void()>(state);
+				finded->callbacks.call(state);
 
 			if(is_up) {
 				if(auto finded{ std::ranges::find(current_pressed_keys.ids, key_id) }; finded != current_pressed_keys.ids.end())

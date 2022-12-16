@@ -65,7 +65,7 @@ namespace null::input {
 		oem_1 = VK_OEM_1, oem_2 = VK_OEM_2, oem_3 = VK_OEM_3, oem_4 = VK_OEM_4, oem_5 = VK_OEM_5, oem_6 = VK_OEM_6, oem_7 = VK_OEM_7
 	}; enum_create_cast_operator(e_key_id, -);
 
-	//@note:	std::function<void()>
+	//@note:	void()
 	//			callbacks for up, down and released, pressed called once, the only difference - up and down called in wnd_proc, released and pressed called in main loop.
 	enum class e_key_state : std::uint32_t {
 		up = 1 << 0,
@@ -222,7 +222,7 @@ namespace null::input {
 		}
 		
 	public:
-		c_bind& add_callback(const e_key_state& state, const std::function<void()>& callback) { callbacks.add(state, callback); return *this; }
+		c_bind& add_callback(const e_key_state& state, const auto& callback) { callbacks.add(state, callback); return *this; }
 
 	public:
 		bool operator==(const c_bind& bind) const { return keys_view == bind.keys_view; }
