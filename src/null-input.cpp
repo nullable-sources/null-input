@@ -20,7 +20,7 @@ namespace null::input {
 	}
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
-		const static std::function<void(e_key_id, bool)> key_processing{ [](e_key_id key_id, const bool is_up) {
+		const static std::function<void(e_key_id, bool)> key_processing{ [](const e_key_id& key_id, const bool& is_up) {
 			static keys_view_t current_pressed_keys{ };
 			
 			c_key& key{ keys[key_id] };
