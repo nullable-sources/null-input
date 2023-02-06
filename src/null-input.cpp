@@ -1,7 +1,7 @@
 #include <null-input.h>
 
 namespace null::input {
-	void c_key::update_states(const utils::win::c_window& window) {
+	void c_key::update_states(const utils::c_segment_time_measurement& time_measurement) {
 		if(~(state | e_key_state::down) && down_duration < 0.f) {
 			state |= e_key_state::pressed;
 			callbacks.at<e_key_callbacks::on_pressed>().call();
@@ -12,11 +12,11 @@ namespace null::input {
 			callbacks.at<e_key_callbacks::on_released>().call();
 		} else state &= ~e_key_state::released;
 
-		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.f ? 0.f : down_duration + window.time_data.delta_time) : -1.f;
+		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.f ? 0.f : down_duration + std::chrono::duration<float>{ time_measurement.representation() }.count()) : -1.f;
 	}
 
-	void begin_frame(const utils::win::c_window& window) {
-		std::ranges::for_each(keys, [&](std::pair<e_key_id, c_key&> key) { key.second.update_states(window); });
+	void begin_frame(const utils::c_segment_time_measurement& time_measurement) {
+		std::ranges::for_each(keys, [&](std::pair<e_key_id, c_key&> key) { key.second.update_states(time_measurement); });
 	}
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {

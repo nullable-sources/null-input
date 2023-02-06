@@ -2,10 +2,12 @@
 #include <null-input.h>
 
 utils::win::c_window window{ };
+utils::c_segment_time_measurement time_measurement{ };
 null::input::c_key& mouse_left{ null::input::keys[null::input::e_key_id::mouse_left] };
 
 void main_loop() {
-    null::input::begin_frame(window);
+    time_measurement.update();
+    null::input::begin_frame(time_measurement);
 
     if(mouse_left.is_down())
         std::cout << "mouse_left down" << std::endl;
@@ -16,6 +18,7 @@ void main_loop() {
 }
 
 int main(HINSTANCE instance) {
+    time_measurement.begin();
     window = utils::win::c_window{ instance };
 
     null::input::c_bind{ { null::input::e_key_id::a, null::input::e_key_id::alt } }

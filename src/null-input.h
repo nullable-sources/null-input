@@ -90,10 +90,10 @@ namespace null::input {
 
 	struct mouse_data_t {
 	public:
-		vec2_t wheel{ }, pos{ }, delta_pos{ };
+		vec2_t<float> wheel{ }, pos{ }, delta_pos{ };
 
 	public:
-		void move(const vec2_t& new_pos) {
+		void move(const vec2_t<float>& new_pos) {
 			delta_pos = new_pos - pos;
 			pos = new_pos;
 		}
@@ -125,7 +125,7 @@ namespace null::input {
 		bool is_released() const { return state & e_key_state::released; }
 		bool is_pressed() const { return state & e_key_state::pressed; }
 
-		void update_states(const utils::win::c_window& window);
+		void update_states(const utils::c_segment_time_measurement& time_measurement);
 	};
 
 #define create_key(key_id) { e_key_id::key_id, { { e_key_id::key_id, #key_id } } } //@note: reflection takes too long during compilation (~15s)
@@ -246,7 +246,7 @@ namespace null::input {
 		bool operator==(const c_bind& bind) const { return keys_view == bind.keys_view; }
 	};
 
-	void begin_frame(const utils::win::c_window& window);
+	void begin_frame(const utils::c_segment_time_measurement& time_measurement);
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
 }
