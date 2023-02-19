@@ -90,10 +90,11 @@ namespace null::input {
 
 	struct mouse_data_t {
 	public:
-		vec2_t<float> wheel{ }, pos{ }, delta_pos{ };
+		vec2_t<int> pos{ }, delta_pos{ };
+		vec2_t<float> wheel{ };
 
 	public:
-		void move(const vec2_t<float>& new_pos) {
+		void move(const vec2_t<int>& new_pos) {
 			delta_pos = new_pos - pos;
 			pos = new_pos;
 		}
