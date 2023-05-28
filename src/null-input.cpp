@@ -31,15 +31,11 @@ namespace null::input {
 			if(is_up) {
 				key.state |= e_key_state::up;
 				key.callbacks.at<e_key_callbacks::on_up>().call();
-
-				if(c_bind* finded{ c_bind::find(current_pressed_keys) }) finded->callbacks.at<e_key_callbacks::on_up>().call();
-				if(auto finded{ std::ranges::find(current_pressed_keys.ids, key_id) }; finded != current_pressed_keys.ids.end()) current_pressed_keys.ids.erase(finded);
+				event_dispatcher.key_up(key);
 			} else {
 				key.state &= e_key_state::down;
 				key.callbacks.at<e_key_callbacks::on_down>().call();
-
-				if(auto finded{ std::ranges::find(current_pressed_keys.ids, key_id) }; finded == current_pressed_keys.ids.end()) current_pressed_keys.ids.push_back(key_id);
-				if(c_bind * finded{ c_bind::find(current_pressed_keys) }) finded->callbacks.at<e_key_callbacks::on_down>().call();
+				event_dispatcher.key_down(key);
 			}
 		} };
 

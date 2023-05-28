@@ -208,45 +208,31 @@ namespace null::input {
 		bool operator==(const keys_view_t&) const = default;
 	};
 
-	class c_bind {
+	enum class e_event_type { key_down, key_up };
+	class c_event_dispatcher : public utils::c_event_dispatcher<e_event_type> {
 	public:
-		static inline std::vector<c_bind> created_binds{ };
+		void key_down(const c_key& key) { dispatch_event(e_event_type::key_down, { { "key", key } }); }
+		void key_up(const c_key& key) { dispatch_event(e_event_type::key_up, { { "key", key } }); }
+	} inline event_dispatcher{ };
 
-		static c_bind* find(const keys_view_t& keys_view) {
-			if(auto finded{ std::ranges::find(created_binds, c_bind{ keys_view }) }; finded != created_binds.end())
-				return &(*finded);
+	class i_event_listener : public utils::i_event_listener<e_event_type> {
+	public:
+		i_event_listener() { }
+		virtual ~i_event_listener() { }
 
-			return nullptr;
+	private:
+		void process_event(const e_event_type& id, const std::unordered_map<std::string, std::any>& parameters) override {
+			switch(id) {
+				case e_event_type::key_down: { key_down(std::any_cast<const c_key&>(parameters.at("key"))); } break;
+				case e_event_type::key_up: { key_up(std::any_cast<const c_key&>(parameters.at("key"))); } break;
+			}
 		}
 
 	public:
-		keys_view_t keys_view{ };
-		utils::callbacks_tuple_t<
-			utils::callbacks_t<e_key_callbacks::on_up, void()>,
-			utils::callbacks_t<e_key_callbacks::on_down, void()>
-		> callbacks{ };
-
-	public:
-		void remove() const {
-			if(auto finded{ std::ranges::find(created_binds, *this) }; finded != created_binds.end())
-				created_binds.erase(finded);
-		}
-
-		void add() const {
-			if(auto finded{ find(keys_view) }) {
-				finded->callbacks = callbacks;
-			} else created_binds.push_back(*this);
-		}
-		
-	public:
-		template <e_key_callbacks key_callback>
-		c_bind& add_callback(const std::function<void()>& callback) { callbacks.at<key_callback>().add(callback); return *this; }
-
-	public:
-		bool operator==(const c_bind& bind) const { return keys_view == bind.keys_view; }
+		virtual void key_down(const c_key& key) { }
+		virtual void key_up(const c_key& key) { }
 	};
 
 	void begin_frame(const utils::c_segment_time_measurement& time_measurement);
-
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
 }
