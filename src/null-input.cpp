@@ -1,3 +1,5 @@
+#include <windowsx.h>
+
 #include <null-input.h>
 
 namespace null::input {

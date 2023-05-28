@@ -1,6 +1,5 @@
 #pragma once
 #include <Windows.h>
-#include <windowsx.h>
 #include <map>
 #include <null-sdk.h>
 
