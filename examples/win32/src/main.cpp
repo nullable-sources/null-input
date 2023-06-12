@@ -1,13 +1,50 @@
 ﻿import null.sdk;
 import null.input;
 
-//@note: we need an example proxy file for the correct order of initialization of variables.
-//       For msvc, 3 years after the adoption of the 20th standard, the compiler is not able to cope with the code generation of modules,
-//       as a result of which we first initialize the variables of our example, and only then the variables in the library, which can cause a crash
-import example;
-
 #include <windows.h>
 #include <iostream>
+
+//@note: in short, i заебался, the example works, but due to the fact that in msvc,
+//       3 years after the introduction of the 20th standard, the order of initialization of variables is broken,
+//       as a result of which the variables of the example are initialized first, and then the library variables.
+
+utils::win::c_window window{ };
+utils::c_segment_time_measurement time_measurement{ };
+null::input::c_key& mouse_left{ null::input::keys[null::input::e_key_id::mouse_left] };
+
+class listener_t : public null::input::i_event_listener {
+public:
+    listener_t() {
+        null::input::event_dispatcher.attach_listener(null::input::e_event_type::key_down, this);
+        null::input::event_dispatcher.attach_listener(null::input::e_event_type::key_up, this);
+    }
+
+    ~listener_t() {
+        null::input::event_dispatcher.detach_listener(null::input::e_event_type::key_down, this);
+        null::input::event_dispatcher.detach_listener(null::input::e_event_type::key_up, this);
+    }
+
+public:
+    void key_down(const null::input::c_key& key) override {
+        std::cout << key.data.name << " key down" << std::endl;
+    }
+
+    void key_up(const null::input::c_key& key) override {
+        std::cout << key.data.name << " key up" << std::endl;
+    }
+} listener{ };
+
+void main_loop() {
+    time_measurement.update();
+    null::input::begin_frame(time_measurement);
+
+    if(mouse_left.is_down())
+        std::cout << "mouse_left down" << std::endl;
+
+    //@note: null::input::keys[null::input::e_key_id::mouse_left].is_down() && null::input::keys[null::input::e_key_id::mouse_right].is_down()
+    if(null::input::keys_view_t{ null::input::e_key_id::mouse_left, null::input::e_key_id::mouse_right }.is_down())
+        std::cout << "mouse_left and mouse_right down" << std::endl;
+}
 
 int main(HINSTANCE instance) {
     window = utils::win::c_window{ instance };
@@ -20,7 +57,7 @@ int main(HINSTANCE instance) {
 
     try {
         window.create();
-        window.main_loop(main_loop);
+        window.main_loop();
         window.destroy();
     } catch(std::exception exp) {
         std::cout << exp.what() << std::endl;
