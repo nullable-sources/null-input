@@ -6,6 +6,7 @@ module;
 #include <any>
 #include <ranges>
 #include <algorithm>
+#include <chrono>
 
 #include <utils/fast_operators.h>
 export module null.input;
@@ -129,7 +130,7 @@ export namespace null::input {
 		c_key(const key_data_t& _data) : data{ _data } { }
 
 	public:
-		bool check_state(const e_key_state& _state) const { return _state == e_key_state::down ? is_down() : (state & _state); }
+		bool check_state(e_key_state _state) const { return _state == e_key_state::down ? is_down() : (state & _state); }
 		bool is_up() const { return state & e_key_state::up; }
 		bool is_down() const { return ~(state | e_key_state::down); }
 		bool is_released() const { return state & e_key_state::released; }
@@ -220,7 +221,7 @@ export namespace null::input {
 		keys_view_t(const std::initializer_list<e_key_id>& _ids) : ids{ _ids } { }
 
 	public:
-		bool check_state(const e_key_state& state) const { return std::ranges::all_of(ids, [&](const e_key_id& id) { return keys[id].check_state(state); }); }
+		bool check_state(e_key_state state) const { return std::ranges::all_of(ids, [&](const e_key_id& id) { return keys[id].check_state(state); }); }
 		bool is_up() const { return check_state(e_key_state::up); }
 		bool is_down() const { return check_state(e_key_state::down); }
 		bool is_released() const { return check_state(e_key_state::released); }
@@ -243,7 +244,7 @@ export namespace null::input {
 		virtual ~i_event_listener() { }
 
 	private:
-		void process_event(const e_event_type& id, const std::unordered_map<std::string, std::any>& parameters) override {
+		void process_event(e_event_type id, const std::unordered_map<std::string, std::any>& parameters) override {
 			switch(id) {
 				case e_event_type::key_down: { key_down(std::any_cast<const c_key&>(parameters.at("key"))); } break;
 				case e_event_type::key_up: { key_up(std::any_cast<const c_key&>(parameters.at("key"))); } break;
@@ -260,7 +261,7 @@ export namespace null::input {
 	}
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
-		const static std::function<void(e_key_id, bool)> key_processing{ [](const e_key_id& key_id, const bool& is_up) {
+		const static std::function<void(e_key_id, bool)> key_processing{ [](e_key_id key_id, bool is_up) {
 			static keys_view_t current_pressed_keys{ };
 
 			c_key& key{ keys[key_id] };
