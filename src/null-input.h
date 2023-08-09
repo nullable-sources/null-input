@@ -102,6 +102,7 @@ namespace null::input {
 	class c_key {
 	public:
 		struct key_data_t {
+		public:
 			const e_key_id id{ };
 			const std::string_view name{ };
 		} const data{ };
@@ -198,7 +199,7 @@ namespace null::input {
 		keys_view_t(const std::initializer_list<e_key_id>& _ids) : ids{ _ids } { }
 
 	public:
-		bool check_state(const e_key_state& state) const { return std::ranges::all_of(ids, [&](const e_key_id& id) { return keys[id].check_state(state); }); }
+		bool check_state(e_key_state state) const { return std::ranges::all_of(ids, [&](e_key_id id) { return keys[id].check_state(state); }); }
 		bool is_up() const { return check_state(e_key_state::up); }
 		bool is_down() const { return check_state(e_key_state::down); }
 		bool is_released() const { return check_state(e_key_state::released); }
@@ -221,7 +222,7 @@ namespace null::input {
 		virtual ~i_event_listener() { }
 
 	private:
-		void process_event(const e_event_type& id, const std::unordered_map<std::string, std::any>& parameters) override {
+		void process_event(e_event_type id, const std::unordered_map<std::string, std::any>& parameters) override {
 			switch(id) {
 				case e_event_type::key_down: { key_down(std::any_cast<const c_key&>(parameters.at("key"))); } break;
 				case e_event_type::key_up: { key_up(std::any_cast<const c_key&>(parameters.at("key"))); } break;
