@@ -104,7 +104,17 @@ namespace null::input {
 		struct key_data_t {
 		public:
 			const e_key_id id{ };
-			const std::string_view name{ };
+			const std::string name{ };
+
+		public:
+			std::string formated_name() const {
+				std::string result{ name };
+				if(result.starts_with("key_"))
+					result = result.substr(4);
+
+				std::ranges::replace(result, '_', ' ');
+				return result;
+			}
 		} const data{ };
 
 	private:
