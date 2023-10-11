@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7e069d39-333d-4e89-90ae-90b382dd5f96}</ProjectGuid>
+  </PropertyGroup>
+  
+  <Import Project="null-input.vcxproj" />
+  <ItemGroup>
+    <ProjectReference Remove="$(SolutionDir)third-party\null-sdk\null-sdk.vcxproj" />
+  </ItemGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SolutionDir)third-party\null-sdk\null-sdk.static-linking.props" />
+  </ImportGroup>
+  
+  <PropertyGroup>
+    <NullProjectName>null-input</NullProjectName>
+    <IntDir>$(SolutionDir)build\$(Configuration)-$(PlatformShortName)\obj-$(NullProjectName)\</IntDir>
+    <TargetName>$(NullProjectName)-$(Configuration)-$(PlatformShortName)</TargetName>
+  </PropertyGroup>
+</Project>
