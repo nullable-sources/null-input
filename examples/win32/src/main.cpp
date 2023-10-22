@@ -41,7 +41,7 @@ void main_loop() {
 
 int main(HINSTANCE instance) {
     time_measurement.begin();
-    window = utils::win::c_window{ instance };
+    window = utils::win::c_window(instance);
 
     mouse_left.callbacks.at<null::input::e_key_callbacks::on_released>().add([] { std::cout << "mouse_left released" << std::endl; });
     mouse_left.callbacks.at<null::input::e_key_callbacks::on_down>().add([] { std::cout << "mouse_left down" << std::endl; });

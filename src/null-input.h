@@ -108,7 +108,7 @@ namespace null::input {
 
 		public:
 			std::string formated_name() const {
-				std::string result{ name };
+				std::string result = name;
 				if(result.starts_with("key_"))
 					result = result.substr(4);
 
@@ -127,7 +127,7 @@ namespace null::input {
 
 	public:
 		c_key() { }
-		c_key(const key_data_t& _data) : data{ _data } { }
+		c_key(const key_data_t& _data) : data(_data) { }
 		
 	public:
 		bool check_state(const e_key_state& _state) const { return _state == e_key_state::down ? is_down() : (state & _state); }
@@ -206,7 +206,7 @@ namespace null::input {
 
 	public:
 		keys_view_t() { }
-		keys_view_t(const std::initializer_list<e_key_id>& _ids) : ids{ _ids } { }
+		keys_view_t(const std::initializer_list<e_key_id>& _ids) : ids(_ids) { }
 
 	public:
 		bool check_state(e_key_state state) const { return std::ranges::all_of(ids, [&](e_key_id id) { return keys[id].check_state(state); }); }

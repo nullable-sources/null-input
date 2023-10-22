@@ -13,7 +13,7 @@ namespace null::input {
 			callbacks.at<e_key_callbacks::on_released>().call();
 		} else state &= ~e_key_state::released;
 
-		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.f ? 0.f : down_duration + std::chrono::duration<float>{ time_measurement.representation() }.count()) : -1.f;
+		down_duration = ~(state | e_key_state::down) ? (down_duration < 0.f ? 0.f : down_duration + std::chrono::duration<float>(time_measurement.representation()).count()) : -1.f;
 	}
 
 	void begin_frame(const utils::c_segment_time_measurement& time_measurement) {
@@ -22,10 +22,8 @@ namespace null::input {
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
 		const static std::function<void(e_key_id, bool)> key_processing{ [](e_key_id key_id, bool is_up) {
-			static keys_view_t current_pressed_keys{ };
-			
-			c_key& key{ keys[key_id] };
-			e_key_state state{ is_up ? e_key_state::up : e_key_state::down };
+			c_key& key = keys[key_id];
+			e_key_state state = is_up ? e_key_state::up : e_key_state::down;
 			
 			if(is_up) {
 				key.state |= e_key_state::up;
@@ -40,7 +38,7 @@ namespace null::input {
 
 		switch(msg) {
 			case WM_MOUSEMOVE: {
-				mouse.move({ GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param) });
+				mouse.move(vec2_t<int>(GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param)));
 			} break;
 
 			case WM_LBUTTONDBLCLK:
