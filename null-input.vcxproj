@@ -24,8 +24,19 @@
   <ItemGroup>
     <ClInclude Include="src\null-input.h" />
   </ItemGroup>
+
+  <PropertyGroup Label="NullVCXProperties">
+    <NullInputDependenciesPath Condition="Exists('$(SolutionDir)null-input.vcxproj')">self</NullInputDependenciesPath>
+    <!-- @note: If the project is used as a dependency, then there should not be a project file in the solution folder -->
+    <NullInputDependenciesPath Condition="!Exists('$(SolutionDir)null-input.vcxproj')">third-party</NullInputDependenciesPath>
+
+    <NullInputSdkVCXPath Condition="'$(NullInputDependenciesPath)' == 'self'">$(SolutionDir)third-party\null-sdk\null-sdk</NullInputSdkVCXPath>
+    <!-- @note: if the project is used as a dependency, then we can simply go to the parent directory and connect the project we need (because it is assumed that all dependencies are in one folder) -->
+    <NullInputSdkVCXPath Condition="'$(NullInputDependenciesPath)' == 'third-party'">..\null-sdk\null-sdk</NullInputSdkVCXPath>
+  </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)third-party\null-sdk\null-sdk.vcxproj">
+    <ProjectReference Include="$(NullInputSdkVCXPath).vcxproj">
       <Project>{f7a10a5c-0fae-424b-8f2b-6cc4e4d898d1}</Project>
     </ProjectReference>
   </ItemGroup>

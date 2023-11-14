@@ -1,3 +1,5 @@
 build/
 .vs/
 *.user
+
+null-input.static-linking.log
