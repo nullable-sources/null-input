@@ -9,6 +9,6 @@
     <ProjectReference Remove="@(ProjectReference)" />
   </ItemGroup>
   <ImportGroup Label="PropertySheets">
-    <Import Project="$(NullInputSdkVCXPath).static-linking.props" />
+    <Import Project="$(NullInputDependenciesPath)null-sdk\null-sdk.static-linking.props" />
   </ImportGroup>
 </Project>

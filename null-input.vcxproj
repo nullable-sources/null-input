@@ -26,17 +26,22 @@
   </ItemGroup>
 
   <PropertyGroup Label="NullVCXProperties">
-    <NullInputDependenciesPath Condition="Exists('$(SolutionDir)null-input.vcxproj')">self</NullInputDependenciesPath>
-    <!-- @note: If the project is used as a dependency, then there should not be a project file in the solution folder -->
-    <NullInputDependenciesPath Condition="!Exists('$(SolutionDir)null-input.vcxproj')">third-party</NullInputDependenciesPath>
+    <!-- @note: There can be many submodules, but it is not necessary to check each one, 
+         because it is assumed that ALL submodules will be in the same folder, so we can check for any of them.
 
-    <NullInputSdkVCXPath Condition="'$(NullInputDependenciesPath)' == 'self'">$(SolutionDir)third-party\null-sdk\null-sdk</NullInputSdkVCXPath>
-    <!-- @note: if the project is used as a dependency, then we can simply go to the parent directory and connect the project we need (because it is assumed that all dependencies are in one folder) -->
-    <NullInputSdkVCXPath Condition="'$(NullInputDependenciesPath)' == 'third-party'">..\null-sdk\null-sdk</NullInputSdkVCXPath>
+         At the beginning, you need to check the presence of a submodule in the third-party folder relative to the solution,
+         because if you check relative (as if the project itself was a submodule),
+         another project not related to the solution can be imported
+         (if you clone null-sdk and null-input into the same folder, then the cloned null will be imported during this check-sdk,
+         not a submodule, but if you use null-sdk and null-input as submodules, then the third-party\null-sdk folder will be empty,
+         respectively, the desired submodule will be imported)
+    -->
+    <NullInputDependenciesPath Condition="Exists('$(SolutionDir)third-party\null-sdk\null-sdk.vcxproj')">$(SolutionDir)third-party\</NullInputDependenciesPath>
+    <NullInputDependenciesPath Condition="!Exists('$(SolutionDir)third-party\null-sdk\null-sdk.vcxproj')">..\</NullInputDependenciesPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NullInputSdkVCXPath).vcxproj">
+    <ProjectReference Include="$(NullInputDependenciesPath)null-sdk\null-sdk.vcxproj">
       <Project>{f7a10a5c-0fae-424b-8f2b-6cc4e4d898d1}</Project>
     </ProjectReference>
   </ItemGroup>
