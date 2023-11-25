@@ -32,7 +32,7 @@
          At the beginning, you need to check the presence of a submodule in the third-party folder relative to the solution,
          because if you check relative (as if the project itself was a submodule),
          another project not related to the solution can be imported
-         (if you clone null-sdk and null-input into the same folder, then the cloned null will be imported during this check-sdk,
+         (if you clone null-sdk and null-input into the same folder, then the cloned null-sdk will be imported during this check,
          not a submodule, but if you use null-sdk and null-input as submodules, then the third-party\null-sdk folder will be empty,
          respectively, the desired submodule will be imported)
     -->
