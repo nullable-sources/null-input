@@ -222,7 +222,7 @@ namespace null::input {
 	enum class e_event_type { key_down, key_up };
 	class c_event_dispatcher : public utils::c_event_dispatcher<e_event_type> {
 	public:
-		void key_down(const c_key& key) { dispatch_event(e_event_type::key_down, { { "key", key } }); }
+		void key_down(const c_key& key, bool repeated) { dispatch_event(e_event_type::key_down, { { "key", key }, { "repeated", repeated } }); }
 		void key_up(const c_key& key) { dispatch_event(e_event_type::key_up, { { "key", key } }); }
 	} inline event_dispatcher{ };
 
@@ -234,13 +234,13 @@ namespace null::input {
 	private:
 		void process_event(e_event_type id, const std::unordered_map<std::string, std::any>& parameters) override {
 			switch(id) {
-				case e_event_type::key_down: { key_down(std::any_cast<const c_key&>(parameters.at("key"))); } break;
+				case e_event_type::key_down: { key_down(std::any_cast<const c_key&>(parameters.at("key")), std::any_cast<bool>(parameters.at("repeated"))); } break;
 				case e_event_type::key_up: { key_up(std::any_cast<const c_key&>(parameters.at("key"))); } break;
 			}
 		}
 
 	public:
-		virtual void key_down(const c_key& key) { }
+		virtual void key_down(const c_key& key, bool repeated) { }
 		virtual void key_up(const c_key& key) { }
 	};
 

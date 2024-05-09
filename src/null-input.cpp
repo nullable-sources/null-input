@@ -17,13 +17,12 @@ namespace null::input {
 	}
 
 	void begin_frame(const utils::c_segment_time_measurement& time_measurement) {
-		std::ranges::for_each(keys, [&](std::pair<e_key_id, c_key&> key) { key.second.update_states(time_measurement); });
+		std::ranges::for_each(keys | std::views::values, std::bind(&c_key::update_states, std::placeholders::_1, time_measurement));
 	}
 
 	int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
-		const static std::function<void(e_key_id, bool)> key_processing{ [](e_key_id key_id, bool is_up) {
+		const static std::function<void(e_key_id, bool, bool)> key_processing = [](e_key_id key_id, bool is_up, bool repeated) {
 			c_key& key = keys[key_id];
-			e_key_state state = is_up ? e_key_state::up : e_key_state::down;
 			
 			if(is_up) {
 				key.state |= e_key_state::up;
@@ -32,9 +31,9 @@ namespace null::input {
 			} else {
 				key.state &= e_key_state::down;
 				key.callbacks.at<e_key_callbacks::on_down>().call();
-				event_dispatcher.key_down(key);
+				event_dispatcher.key_down(key, repeated);
 			}
-		} };
+		};
 
 		switch(msg) {
 			case WM_MOUSEMOVE: {
@@ -44,38 +43,35 @@ namespace null::input {
 			case WM_LBUTTONDBLCLK:
 			case WM_LBUTTONDOWN:
 			case WM_LBUTTONUP: {
-				key_processing(e_key_id::mouse_left, msg == WM_LBUTTONUP);
+				key_processing(e_key_id::mouse_left, msg == WM_LBUTTONUP, false);
 			} break;
 
 			case WM_RBUTTONDBLCLK:
 			case WM_RBUTTONDOWN:
 			case WM_RBUTTONUP: {
-				key_processing(e_key_id::mouse_right, msg == WM_RBUTTONUP);
+				key_processing(e_key_id::mouse_right, msg == WM_RBUTTONUP, false);
 			} break;
 
 			case WM_MBUTTONDBLCLK:
 			case WM_MBUTTONDOWN:
 			case WM_MBUTTONUP: {
-				key_processing(e_key_id::mouse_middle, msg == WM_MBUTTONUP);
+				key_processing(e_key_id::mouse_middle, msg == WM_MBUTTONUP, false);
 			} break;
 
 			case WM_XBUTTONDBLCLK:
 			case WM_XBUTTONDOWN:
 			case WM_XBUTTONUP: {
-				key_processing((e_key_id)(-e_key_id::mouse_middle + GET_XBUTTON_WPARAM(w_param)), msg == WM_XBUTTONUP);
+				key_processing((e_key_id)(-e_key_id::mouse_middle + GET_XBUTTON_WPARAM(w_param)), msg == WM_XBUTTONUP, false);
 			} break;
 
 			case WM_MOUSEWHEEL: { mouse.wheel.y = (float)GET_WHEEL_DELTA_WPARAM(w_param) / (float)WHEEL_DELTA; } return true;
 			case WM_MOUSEHWHEEL: { mouse.wheel.x = (float)GET_WHEEL_DELTA_WPARAM(w_param) / (float)WHEEL_DELTA; } return true;
 
 			case WM_KEYDOWN:
-			case WM_SYSKEYDOWN: {
-				key_processing((e_key_id)w_param, false);
-			} break;
-
 			case WM_KEYUP:
+			case WM_SYSKEYDOWN:
 			case WM_SYSKEYUP: {
-				key_processing((e_key_id)w_param, true);
+				key_processing((e_key_id)w_param, (HIWORD(l_param) & KF_UP) == KF_UP, (HIWORD(l_param) & KF_REPEAT) == KF_REPEAT);
 			} break;
 
 			default: return -1;

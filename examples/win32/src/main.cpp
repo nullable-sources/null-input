@@ -18,12 +18,12 @@ public:
     }
 
 public:
-    void key_down(const null::input::c_key& key) override {
-        std::cout << key.data.name << " key down" << std::endl;
+    void key_down(const null::input::c_key& key, bool repeated) override {
+        std::cout << "event listener: " << key.data.name << " key down (" << repeated << ")" << std::endl;
     }
 
     void key_up(const null::input::c_key& key) override {
-        std::cout << key.data.name << " key up" << std::endl;
+        std::cout << "event listener: " << key.data.name << " key up" << std::endl;
     }
 } listener{ };
 
