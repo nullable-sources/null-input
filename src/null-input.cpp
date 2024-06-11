@@ -74,6 +74,11 @@ namespace null::input {
 				key_processing((e_key_id)w_param, (HIWORD(l_param) & KF_UP) == KF_UP, (HIWORD(l_param) & KF_REPEAT) == KF_REPEAT);
 			} break;
 
+			case WM_KILLFOCUS: {
+				for(auto& [id, key] : keys)
+					if(key.is_down()) key_processing(id, true, false);
+			} break;
+
 			default: return -1;
 		}
 		return 1;

@@ -206,6 +206,7 @@ namespace null::input {
 
 	public:
 		keys_view_t() { }
+		keys_view_t(const std::vector<e_key_id>& _ids) : ids(_ids) { }
 		keys_view_t(const std::initializer_list<e_key_id>& _ids) : ids(_ids) { }
 
 	public:
@@ -214,6 +215,32 @@ namespace null::input {
 		bool is_down() const { return check_state(e_key_state::down); }
 		bool is_released() const { return check_state(e_key_state::released); }
 		bool is_pressed() const { return check_state(e_key_state::pressed); }
+
+		std::vector<e_key_id>::iterator begin() { return ids.begin(); }
+		std::vector<e_key_id>::const_iterator begin() const { return ids.begin(); }
+		std::vector<e_key_id>::iterator end() { return ids.end(); }
+		std::vector<e_key_id>::const_iterator end() const { return ids.end(); }
+
+		const e_key_id& front() const { return ids.front(); }
+		const e_key_id& back() const { return ids.back(); }
+
+		bool contains(e_key_id key_id) const { return std::ranges::find(ids, key_id) != end(); }
+		void remove(e_key_id key_id) { std::erase(ids, key_id); }
+		void add(e_key_id key_id) { ids.push_back(key_id); }
+		void clear() { ids.clear(); }
+		bool empty() const { return ids.empty() || (ids.size() == 1 && ids[0] == e_key_id::none); }
+		size_t size() const { return ids.size(); }
+
+		bool include(const keys_view_t& keys_view) const {
+			if(keys_view.empty() || keys_view.size() > size()) return false;
+			return std::ranges::equal(std::ranges::subrange(begin(), std::next(begin(), keys_view.size())), keys_view.ids);
+		}
+
+		keys_view_t subview(size_t offset, size_t count = size_t(-1)) const {
+			size_t start_idx = std::min(offset, size());
+			size_t end_idx = std::clamp(offset + std::min(count, size()), start_idx, size());
+			return std::vector(std::next(begin(), start_idx), std::next(begin(), end_idx));
+		}
 
 	public:
 		bool operator==(const keys_view_t&) const = default;
@@ -232,7 +259,7 @@ namespace null::input {
 		virtual ~i_event_listener() { }
 
 	private:
-		void process_event(e_event_type id, const std::unordered_map<std::string, std::any>& parameters) override {
+		void process_event(e_event_type id, const utils::event_parameters_t& parameters) override {
 			switch(id) {
 				case e_event_type::key_down: { key_down(std::any_cast<const c_key&>(parameters.at("key")), std::any_cast<bool>(parameters.at("repeated"))); } break;
 				case e_event_type::key_up: { key_up(std::any_cast<const c_key&>(parameters.at("key"))); } break;
