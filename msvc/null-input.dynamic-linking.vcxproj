@@ -3,12 +3,10 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7e069d39-333d-4e89-90ae-90b382dd5f96}</ProjectGuid>
   </PropertyGroup>
+
+  <PropertyGroup Label="NullVCXProperties">
+    <NullInputLinkingVCX>dynamic</NullInputLinkingVCX>
+  </PropertyGroup>
   
   <Import Project="null-input.vcxproj" />
-  <ItemGroup>
-    <ProjectReference Remove="@(ProjectReference)" />
-  </ItemGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(NullInputDependenciesPath)null-sdk\null-sdk.static-linking.props" />
-  </ImportGroup>
 </Project>

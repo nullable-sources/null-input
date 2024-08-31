@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup Label="NullProperties">
-        <NullInputRoot>$(MSBuildThisFileDirectory)</NullInputRoot>
+        <NullInputRoot>$(MSBuildThisFileDirectory)..\</NullInputRoot>
         <NullInputConfiguration Condition="'$(UseDebugLibraries)' == 'true'">debug</NullInputConfiguration>
         <NullInputConfiguration Condition="'$(UseDebugLibraries)' == 'false'">release</NullInputConfiguration>
+        <NullInputLibPostfix>$(NullInputConfiguration)-$(LibrariesArchitecture)</NullInputLibPostfix>
     </PropertyGroup>
 
     <ItemDefinitionGroup>
@@ -12,11 +13,11 @@
         </ClCompile>
         <Lib>
             <AdditionalLibraryDirectories>$(NullInputRoot)build;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-            <AdditionalDependencies>null-input-$(NullInputConfiguration)-$(LibrariesArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+            <AdditionalDependencies>null-input-$(NullInputLibPostfix).lib;%(AdditionalDependencies)</AdditionalDependencies>
         </Lib>
         <Link>
             <AdditionalLibraryDirectories>$(NullInputRoot)build;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-            <AdditionalDependencies>null-input-$(NullInputConfiguration)-$(LibrariesArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+            <AdditionalDependencies>null-input-$(NullInputLibPostfix).lib;%(AdditionalDependencies)</AdditionalDependencies>
         </Link>
     </ItemDefinitionGroup>
 </Project>

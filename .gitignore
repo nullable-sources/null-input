@@ -1,4 +1,6 @@
 build/
 .vs/
 *.user
+
+*.dynamic-linking.log
 *.static-linking.log

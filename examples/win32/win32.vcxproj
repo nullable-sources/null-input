@@ -21,14 +21,6 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\null-input.vcxproj">
-      <Project>{7e069d39-333d-4e89-90ae-90b382dd5f96}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\third-party\null-sdk\null-sdk.vcxproj">
-      <Project>{f7a10a5c-0fae-424b-8f2b-6cc4e4d898d1}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -180,4 +172,6 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Import Project="..\..\linking\null-input.static-linking.props" />
+  <Import Project="..\..\third-party\null-sdk\linking\null-sdk.static-linking.props" />
 </Project>
