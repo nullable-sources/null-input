@@ -1,10 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <map>
-
 #include <null-sdk.h>
-
-#include "null-input/api-defines.h"
 
 namespace ntl::input {
     enum class e_key_id {
@@ -100,11 +97,7 @@ namespace ntl::input {
             delta_pos = new_pos - pos;
             pos = new_pos;
         }
-    };
-    NULLINPUT_API inline mouse_data_t& mouse() {
-        static mouse_data_t mouse{ };
-        return mouse;
-    }
+    } inline mouse{ };
 
     class c_key {
     public:
@@ -146,71 +139,66 @@ namespace ntl::input {
         void update_states(const c_segment_time_measurement& time_measurement);
     };
 
-    NULLINPUT_API inline std::map<e_key_id, c_key>& keys() {
 #define create_key(key_id) { e_key_id::key_id, { { e_key_id::key_id, #key_id } } } //@note: reflection takes too long during compilation (~15s)
-        static std::map<e_key_id, c_key> keys = {
-            create_key(mouse_left), create_key(mouse_right),
-            create_key(mouse_middle),
-            create_key(mouse_x1), create_key(mouse_x2),
+    inline std::map<e_key_id, c_key> keys = {
+        create_key(mouse_left), create_key(mouse_right),
+        create_key(mouse_middle),
+        create_key(mouse_x1), create_key(mouse_x2),
 
-            create_key(shift),
-            create_key(ctrl),
-            create_key(alt),
+        create_key(shift),
+        create_key(ctrl),
+        create_key(alt),
 
-            create_key(cancel),
-            create_key(backspace),
-            create_key(tab),
-            create_key(clear),
-            create_key(enter),
+        create_key(cancel),
+        create_key(backspace),
+        create_key(tab),
+        create_key(clear),
+        create_key(enter),
 
-            create_key(pause),
-            create_key(caps_lock),
-            create_key(escape),
-            create_key(space),
-            create_key(page_up),
-            create_key(page_down),
-            create_key(end),
-            create_key(home),
-            create_key(left),
-            create_key(up),
-            create_key(right),
-            create_key(down),
-            create_key(print_screen),
-            create_key(insert),
-            create_key(del),
+        create_key(pause),
+        create_key(caps_lock),
+        create_key(escape),
+        create_key(space),
+        create_key(page_up),
+        create_key(page_down),
+        create_key(end),
+        create_key(home),
+        create_key(left),
+        create_key(up),
+        create_key(right),
+        create_key(down),
+        create_key(print_screen),
+        create_key(insert),
+        create_key(del),
 
-            create_key(key_0), create_key(key_1), create_key(key_2), create_key(key_3), create_key(key_4),
-            create_key(key_5), create_key(key_6), create_key(key_7), create_key(key_8), create_key(key_9),
+        create_key(key_0), create_key(key_1), create_key(key_2), create_key(key_3), create_key(key_4),
+        create_key(key_5), create_key(key_6), create_key(key_7), create_key(key_8), create_key(key_9),
 
-            create_key(a), create_key(b), create_key(c), create_key(d), create_key(e),
-            create_key(f), create_key(g), create_key(h), create_key(i), create_key(j),
-            create_key(k), create_key(l), create_key(m), create_key(n), create_key(o),
-            create_key(p), create_key(q), create_key(r), create_key(s), create_key(t),
-            create_key(u), create_key(v), create_key(w), create_key(x), create_key(y),
-            create_key(z),
+        create_key(a), create_key(b), create_key(c), create_key(d), create_key(e),
+        create_key(f), create_key(g), create_key(h), create_key(i), create_key(j),
+        create_key(k), create_key(l), create_key(m), create_key(n), create_key(o),
+        create_key(p), create_key(q), create_key(r), create_key(s), create_key(t),
+        create_key(u), create_key(v), create_key(w), create_key(x), create_key(y),
+        create_key(z),
 
-            create_key(win),
-            create_key(app),
+        create_key(win),
+        create_key(app),
 
-            create_key(num_lock),
-            create_key(num_0), create_key(num_1), create_key(num_2), create_key(num_3), create_key(num_4),
-            create_key(num_5), create_key(num_6), create_key(num_7), create_key(num_8), create_key(num_9),
-            create_key(num_multiply), create_key(num_add), create_key(num_subtract), create_key(num_decimal), create_key(num_divide),
+        create_key(num_lock),
+        create_key(num_0), create_key(num_1), create_key(num_2), create_key(num_3), create_key(num_4),
+        create_key(num_5), create_key(num_6), create_key(num_7), create_key(num_8), create_key(num_9),
+        create_key(num_multiply), create_key(num_add), create_key(num_subtract), create_key(num_decimal), create_key(num_divide),
 
-            create_key(f1), create_key(f2), create_key(f3), create_key(f4), create_key(f5),
-            create_key(f6), create_key(f7), create_key(f8), create_key(f9), create_key(f10),
-            create_key(f11), create_key(f12),
+        create_key(f1), create_key(f2), create_key(f3), create_key(f4), create_key(f5),
+        create_key(f6), create_key(f7), create_key(f8), create_key(f9), create_key(f10),
+        create_key(f11), create_key(f12),
 
-            create_key(scroll_lock),
+        create_key(scroll_lock),
 
-            create_key(oem_plus), create_key(oem_comma), create_key(oem_minus), create_key(oem_period),
-            create_key(oem_1), create_key(oem_2), create_key(oem_3), create_key(oem_4), create_key(oem_5), create_key(oem_6), create_key(oem_7)
-        };
+        create_key(oem_plus), create_key(oem_comma), create_key(oem_minus), create_key(oem_period),
+        create_key(oem_1), create_key(oem_2), create_key(oem_3), create_key(oem_4), create_key(oem_5), create_key(oem_6), create_key(oem_7)
+    };
 #undef create_key
-        return keys;
-    }
-
-    NULLINPUT_API inline c_key& get_key(e_key_id key_id) { return keys()[key_id]; }
 
     struct keys_view_t {
     public:
@@ -222,7 +210,7 @@ namespace ntl::input {
         keys_view_t(const std::initializer_list<e_key_id>& _ids) : ids(_ids) { }
 
     public:
-        bool check_state(e_key_state state) const { return std::ranges::all_of(ids, [&](e_key_id id) { return get_key(id).check_state(state); }); }
+        bool check_state(e_key_state state) const { return std::ranges::all_of(ids, [&](e_key_id id) { return keys[id].check_state(state); }); }
         bool is_up() const { return check_state(e_key_state::up); }
         bool is_down() const { return check_state(e_key_state::down); }
         bool is_released() const { return check_state(e_key_state::released); }
@@ -263,11 +251,7 @@ namespace ntl::input {
     public:
         void key_down(const c_key& key, bool repeated) { dispatch_event(e_event_type::key_down, { { "key", key }, { "repeated", repeated } }); }
         void key_up(const c_key& key) { dispatch_event(e_event_type::key_up, { { "key", key } }); }
-    };
-    NULLINPUT_API inline c_key_event_dispatcher& key_event_dispatcher() {
-        static c_key_event_dispatcher key_event_dispatcher{ };
-        return key_event_dispatcher;
-    }
+    } inline key_event_dispatcher{ };
 
     class i_key_event_listener : public i_event_listener<e_event_type> {
     public:
@@ -287,6 +271,6 @@ namespace ntl::input {
         virtual void key_up(const c_key& key) { }
     };
 
-    NULLINPUT_API void begin_frame(const c_segment_time_measurement& time_measurement);
-    NULLINPUT_API int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
+    void begin_frame(const c_segment_time_measurement& time_measurement);
+    int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
 }

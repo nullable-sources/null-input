@@ -17,27 +17,27 @@ namespace ntl::input {
     }
 
     void begin_frame(const c_segment_time_measurement& time_measurement) {
-        std::ranges::for_each(keys() | std::views::values, std::bind(&c_key::update_states, std::placeholders::_1, time_measurement));
+        std::ranges::for_each(keys | std::views::values, std::bind(&c_key::update_states, std::placeholders::_1, time_measurement));
     }
 
     int wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
         const static std::function<void(e_key_id, bool, bool)> key_processing = [](e_key_id key_id, bool is_up, bool repeated) {
-            c_key& key = get_key(key_id);
+            c_key& key = keys[key_id];
 
             if(is_up) {
                 key.state |= e_key_state::up;
                 key.callbacks.at<e_key_callbacks::on_up>().call();
-                key_event_dispatcher().key_up(key);
+                key_event_dispatcher.key_up(key);
             } else {
                 key.state &= e_key_state::down;
                 key.callbacks.at<e_key_callbacks::on_down>().call();
-                key_event_dispatcher().key_down(key, repeated);
+                key_event_dispatcher.key_down(key, repeated);
             }
         };
 
         switch(msg) {
             case WM_MOUSEMOVE: {
-                mouse().move(vec2_t<int>(GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param)));
+                mouse.move(vec2_t<int>(GET_X_LPARAM(l_param), GET_Y_LPARAM(l_param)));
             } break;
 
             case WM_LBUTTONDBLCLK:
@@ -64,8 +64,8 @@ namespace ntl::input {
                 key_processing((e_key_id)(-e_key_id::mouse_middle + GET_XBUTTON_WPARAM(w_param)), msg == WM_XBUTTONUP, false);
             } break;
 
-            case WM_MOUSEWHEEL: { mouse().wheel.y = (float)GET_WHEEL_DELTA_WPARAM(w_param) / (float)WHEEL_DELTA; } return true;
-            case WM_MOUSEHWHEEL: { mouse().wheel.x = (float)GET_WHEEL_DELTA_WPARAM(w_param) / (float)WHEEL_DELTA; } return true;
+            case WM_MOUSEWHEEL: { mouse.wheel.y = (float)GET_WHEEL_DELTA_WPARAM(w_param) / (float)WHEEL_DELTA; } return true;
+            case WM_MOUSEHWHEEL: { mouse.wheel.x = (float)GET_WHEEL_DELTA_WPARAM(w_param) / (float)WHEEL_DELTA; } return true;
 
             case WM_KEYDOWN:
             case WM_KEYUP:
@@ -75,7 +75,7 @@ namespace ntl::input {
             } break;
 
             case WM_KILLFOCUS: {
-                for(auto& [id, key] : keys())
+                for(auto& [id, key] : keys)
                     if(key.is_down()) key_processing(id, true, false);
             } break;
 

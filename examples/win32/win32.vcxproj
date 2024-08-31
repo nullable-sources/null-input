@@ -172,6 +172,6 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <Import Project="..\..\linking\null-input.static-linking.props" />
-  <Import Project="..\..\third-party\null-sdk\linking\null-sdk.static-linking.props" />
+  <Import Project="..\..\null-input.props" />
+  <Import Project="..\..\third-party\null-sdk\null-sdk.props" />
 </Project>

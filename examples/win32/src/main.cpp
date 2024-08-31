@@ -3,18 +3,18 @@
 
 ntl::win::c_window window{ };
 ntl::c_segment_time_measurement time_measurement{ };
-ntl::input::c_key& mouse_left{ ntl::input::get_key(ntl::input::e_key_id::mouse_left) };
+ntl::input::c_key& mouse_left{ ntl::input::keys[ntl::input::e_key_id::mouse_left] };
 
 class listener_t : public ntl::input::i_key_event_listener {
 public:
     listener_t() {
-        ntl::input::key_event_dispatcher().attach_listener(ntl::input::e_event_type::key_down, this);
-        ntl::input::key_event_dispatcher().attach_listener(ntl::input::e_event_type::key_up, this);
+        ntl::input::key_event_dispatcher.attach_listener(ntl::input::e_event_type::key_down, this);
+        ntl::input::key_event_dispatcher.attach_listener(ntl::input::e_event_type::key_up, this);
     }
 
     ~listener_t() {
-        ntl::input::key_event_dispatcher().detach_listener(ntl::input::e_event_type::key_down, this);
-        ntl::input::key_event_dispatcher().detach_listener(ntl::input::e_event_type::key_up, this);
+        ntl::input::key_event_dispatcher.detach_listener(ntl::input::e_event_type::key_down, this);
+        ntl::input::key_event_dispatcher.detach_listener(ntl::input::e_event_type::key_up, this);
     }
 
 public:
