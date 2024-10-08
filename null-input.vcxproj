@@ -25,17 +25,17 @@
     <ClInclude Include="src\null-input.h" />
   </ItemGroup>
 
-  <PropertyGroup Label="NullVCXProperties">
-    <NullInputDependenciesPath Condition="Exists('$(SolutionDir)third-party\null-sdk\null-sdk.sln')">$(SolutionDir)third-party\</NullInputDependenciesPath>
-    <NullInputDependenciesPath Condition="!Exists('$(SolutionDir)third-party\null-sdk\null-sdk.sln')">..\</NullInputDependenciesPath>
-  </PropertyGroup>
-
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{7e069d39-333d-4e89-90ae-90b382dd5f96}</ProjectGuid>
     <RootNamespace>null_input</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NullVCXProperties">
+    <NullInputDependenciesPath Condition="Exists('$(SolutionDir)third-party\null-sdk\null-sdk.sln')">$(SolutionDir)third-party\</NullInputDependenciesPath>
+    <NullInputDependenciesPath Condition="!Exists('$(SolutionDir)third-party\null-sdk\null-sdk.sln')">..\</NullInputDependenciesPath>
   </PropertyGroup>
 
   <PropertyGroup Label="Configuration">
@@ -72,7 +72,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking Condition="'$(Configuration)'=='release'">true</FunctionLevelLinking>
       <IntrinsicFunctions Condition="'$(Configuration)'=='release'">true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NOMINMAX;NULLINPUT_EXPORTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)'=='debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)'=='release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>

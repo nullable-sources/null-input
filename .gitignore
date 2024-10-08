@@ -1,4 +1,6 @@
 build/
 .vs/
 *.user
-*log
+*.log
+
+third-party/null-projects-config

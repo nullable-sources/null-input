@@ -63,7 +63,7 @@ namespace ntl::input {
 
         oem_plus = VK_OEM_PLUS, oem_comma = VK_OEM_COMMA, oem_minus = VK_OEM_MINUS, oem_period = VK_OEM_PERIOD,
         oem_1 = VK_OEM_1, oem_2 = VK_OEM_2, oem_3 = VK_OEM_3, oem_4 = VK_OEM_4, oem_5 = VK_OEM_5, oem_6 = VK_OEM_6, oem_7 = VK_OEM_7
-    }; ENUM_CREATE_CAST_OPERATOR(e_key_id, -);
+    }; NULLSDK_ENUM_CREATE_CAST_OPERATOR(e_key_id, -);
 
     //@note: void()
     //       callbacks for up, down and released, pressed called once, the only difference - up and down called in wnd_proc, released and pressed called in main loop.
@@ -72,7 +72,7 @@ namespace ntl::input {
         down = ~up,
         released = 1 << 1,
         pressed = 1 << 2
-    }; ENUM_CREATE_BIT_OPERATORS(e_key_state, true);
+    }; NULLSDK_ENUM_CREATE_BIT_OPERATORS(e_key_state, true);
 
     enum class e_key_callbacks {
         on_up,
@@ -139,66 +139,66 @@ namespace ntl::input {
         void update_states(const c_segment_time_measurement& time_measurement);
     };
 
-#define create_key(key_id) { e_key_id::key_id, { { e_key_id::key_id, #key_id } } } //@note: reflection takes too long during compilation (~15s)
+#define NULLINPUT_CREATE_KEY(key_id) { e_key_id::key_id, { { e_key_id::key_id, #key_id } } } //@note: reflection takes too long during compilation (~15s)
     inline std::map<e_key_id, c_key> keys = {
-        create_key(mouse_left), create_key(mouse_right),
-        create_key(mouse_middle),
-        create_key(mouse_x1), create_key(mouse_x2),
+        NULLINPUT_CREATE_KEY(mouse_left), NULLINPUT_CREATE_KEY(mouse_right),
+        NULLINPUT_CREATE_KEY(mouse_middle),
+        NULLINPUT_CREATE_KEY(mouse_x1), NULLINPUT_CREATE_KEY(mouse_x2),
 
-        create_key(shift),
-        create_key(ctrl),
-        create_key(alt),
+        NULLINPUT_CREATE_KEY(shift),
+        NULLINPUT_CREATE_KEY(ctrl),
+        NULLINPUT_CREATE_KEY(alt),
 
-        create_key(cancel),
-        create_key(backspace),
-        create_key(tab),
-        create_key(clear),
-        create_key(enter),
+        NULLINPUT_CREATE_KEY(cancel),
+        NULLINPUT_CREATE_KEY(backspace),
+        NULLINPUT_CREATE_KEY(tab),
+        NULLINPUT_CREATE_KEY(clear),
+        NULLINPUT_CREATE_KEY(enter),
 
-        create_key(pause),
-        create_key(caps_lock),
-        create_key(escape),
-        create_key(space),
-        create_key(page_up),
-        create_key(page_down),
-        create_key(end),
-        create_key(home),
-        create_key(left),
-        create_key(up),
-        create_key(right),
-        create_key(down),
-        create_key(print_screen),
-        create_key(insert),
-        create_key(del),
+        NULLINPUT_CREATE_KEY(pause),
+        NULLINPUT_CREATE_KEY(caps_lock),
+        NULLINPUT_CREATE_KEY(escape),
+        NULLINPUT_CREATE_KEY(space),
+        NULLINPUT_CREATE_KEY(page_up),
+        NULLINPUT_CREATE_KEY(page_down),
+        NULLINPUT_CREATE_KEY(end),
+        NULLINPUT_CREATE_KEY(home),
+        NULLINPUT_CREATE_KEY(left),
+        NULLINPUT_CREATE_KEY(up),
+        NULLINPUT_CREATE_KEY(right),
+        NULLINPUT_CREATE_KEY(down),
+        NULLINPUT_CREATE_KEY(print_screen),
+        NULLINPUT_CREATE_KEY(insert),
+        NULLINPUT_CREATE_KEY(del),
 
-        create_key(key_0), create_key(key_1), create_key(key_2), create_key(key_3), create_key(key_4),
-        create_key(key_5), create_key(key_6), create_key(key_7), create_key(key_8), create_key(key_9),
+        NULLINPUT_CREATE_KEY(key_0), NULLINPUT_CREATE_KEY(key_1), NULLINPUT_CREATE_KEY(key_2), NULLINPUT_CREATE_KEY(key_3), NULLINPUT_CREATE_KEY(key_4),
+        NULLINPUT_CREATE_KEY(key_5), NULLINPUT_CREATE_KEY(key_6), NULLINPUT_CREATE_KEY(key_7), NULLINPUT_CREATE_KEY(key_8), NULLINPUT_CREATE_KEY(key_9),
 
-        create_key(a), create_key(b), create_key(c), create_key(d), create_key(e),
-        create_key(f), create_key(g), create_key(h), create_key(i), create_key(j),
-        create_key(k), create_key(l), create_key(m), create_key(n), create_key(o),
-        create_key(p), create_key(q), create_key(r), create_key(s), create_key(t),
-        create_key(u), create_key(v), create_key(w), create_key(x), create_key(y),
-        create_key(z),
+        NULLINPUT_CREATE_KEY(a), NULLINPUT_CREATE_KEY(b), NULLINPUT_CREATE_KEY(c), NULLINPUT_CREATE_KEY(d), NULLINPUT_CREATE_KEY(e),
+        NULLINPUT_CREATE_KEY(f), NULLINPUT_CREATE_KEY(g), NULLINPUT_CREATE_KEY(h), NULLINPUT_CREATE_KEY(i), NULLINPUT_CREATE_KEY(j),
+        NULLINPUT_CREATE_KEY(k), NULLINPUT_CREATE_KEY(l), NULLINPUT_CREATE_KEY(m), NULLINPUT_CREATE_KEY(n), NULLINPUT_CREATE_KEY(o),
+        NULLINPUT_CREATE_KEY(p), NULLINPUT_CREATE_KEY(q), NULLINPUT_CREATE_KEY(r), NULLINPUT_CREATE_KEY(s), NULLINPUT_CREATE_KEY(t),
+        NULLINPUT_CREATE_KEY(u), NULLINPUT_CREATE_KEY(v), NULLINPUT_CREATE_KEY(w), NULLINPUT_CREATE_KEY(x), NULLINPUT_CREATE_KEY(y),
+        NULLINPUT_CREATE_KEY(z),
 
-        create_key(win),
-        create_key(app),
+        NULLINPUT_CREATE_KEY(win),
+        NULLINPUT_CREATE_KEY(app),
 
-        create_key(num_lock),
-        create_key(num_0), create_key(num_1), create_key(num_2), create_key(num_3), create_key(num_4),
-        create_key(num_5), create_key(num_6), create_key(num_7), create_key(num_8), create_key(num_9),
-        create_key(num_multiply), create_key(num_add), create_key(num_subtract), create_key(num_decimal), create_key(num_divide),
+        NULLINPUT_CREATE_KEY(num_lock),
+        NULLINPUT_CREATE_KEY(num_0), NULLINPUT_CREATE_KEY(num_1), NULLINPUT_CREATE_KEY(num_2), NULLINPUT_CREATE_KEY(num_3), NULLINPUT_CREATE_KEY(num_4),
+        NULLINPUT_CREATE_KEY(num_5), NULLINPUT_CREATE_KEY(num_6), NULLINPUT_CREATE_KEY(num_7), NULLINPUT_CREATE_KEY(num_8), NULLINPUT_CREATE_KEY(num_9),
+        NULLINPUT_CREATE_KEY(num_multiply), NULLINPUT_CREATE_KEY(num_add), NULLINPUT_CREATE_KEY(num_subtract), NULLINPUT_CREATE_KEY(num_decimal), NULLINPUT_CREATE_KEY(num_divide),
 
-        create_key(f1), create_key(f2), create_key(f3), create_key(f4), create_key(f5),
-        create_key(f6), create_key(f7), create_key(f8), create_key(f9), create_key(f10),
-        create_key(f11), create_key(f12),
+        NULLINPUT_CREATE_KEY(f1), NULLINPUT_CREATE_KEY(f2), NULLINPUT_CREATE_KEY(f3), NULLINPUT_CREATE_KEY(f4), NULLINPUT_CREATE_KEY(f5),
+        NULLINPUT_CREATE_KEY(f6), NULLINPUT_CREATE_KEY(f7), NULLINPUT_CREATE_KEY(f8), NULLINPUT_CREATE_KEY(f9), NULLINPUT_CREATE_KEY(f10),
+        NULLINPUT_CREATE_KEY(f11), NULLINPUT_CREATE_KEY(f12),
 
-        create_key(scroll_lock),
+        NULLINPUT_CREATE_KEY(scroll_lock),
 
-        create_key(oem_plus), create_key(oem_comma), create_key(oem_minus), create_key(oem_period),
-        create_key(oem_1), create_key(oem_2), create_key(oem_3), create_key(oem_4), create_key(oem_5), create_key(oem_6), create_key(oem_7)
+        NULLINPUT_CREATE_KEY(oem_plus), NULLINPUT_CREATE_KEY(oem_comma), NULLINPUT_CREATE_KEY(oem_minus), NULLINPUT_CREATE_KEY(oem_period),
+        NULLINPUT_CREATE_KEY(oem_1), NULLINPUT_CREATE_KEY(oem_2), NULLINPUT_CREATE_KEY(oem_3), NULLINPUT_CREATE_KEY(oem_4), NULLINPUT_CREATE_KEY(oem_5), NULLINPUT_CREATE_KEY(oem_6), NULLINPUT_CREATE_KEY(oem_7)
     };
-#undef create_key
+#undef NULLINPUT_CREATE_KEY
 
     struct keys_view_t {
     public:
