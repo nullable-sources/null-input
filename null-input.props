@@ -11,10 +11,6 @@
         <ClCompile>
             <AdditionalIncludeDirectories>$(NullInputRoot)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
         </ClCompile>
-        <Lib>
-            <AdditionalLibraryDirectories>$(NullInputRoot)build;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-            <AdditionalDependencies>null-input-$(NullInputLibPostfix).lib;%(AdditionalDependencies)</AdditionalDependencies>
-        </Lib>
         <Link>
             <AdditionalLibraryDirectories>$(NullInputRoot)build;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
             <AdditionalDependencies>null-input-$(NullInputLibPostfix).lib;%(AdditionalDependencies)</AdditionalDependencies>
